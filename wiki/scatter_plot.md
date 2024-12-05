@@ -11,7 +11,7 @@ illustrate how each piece contributes to the final visualization.
 ``` r
 library(ggplot2)
 library(data.table)
-source("C:/code/apde.graphs/R/graphing_helpers.R")
+library(apde.graphs)
 ```
 
 ## Generate synthetic data
@@ -39,6 +39,22 @@ dt[group == 'Group 2',
      rnorm(.N, 0, 0.2)]
 ```
 
+Here is a peek at the data. Note that, in general, `ggplot2` works best
+with data in long format.
+
+``` r
+head(dt)
+```
+
+|      age | group   |   wisdom |
+|---------:|:--------|---------:|
+| 38.51950 | Group 2 | 20.71231 |
+| 69.30170 | Group 2 | 20.67414 |
+| 36.74943 | Group 2 | 20.55398 |
+| 39.77599 | Group 1 | 20.63184 |
+| 16.36703 | Group 2 | 20.32795 |
+| 21.18335 | Group 1 | 20.61924 |
+
 ## Create the base `ggplot2` scatter plot
 
 ``` r
@@ -47,7 +63,7 @@ myplot <- ggplot(dt, aes(x = age,
                          color = group,    # different color for each group
                          shape = group)) + # different shape for each group
   # Basic scatter plot
-  geom_point(alpha = 0.3,  # Transparency of dots
+  geom_point(alpha = 0.3,  # Transparency of dots (0 == most, 1 == least)
              size = 3) +   # dot size
   # Add smoothed fit lines with confidence intervals
   geom_smooth(method = 'loess',    # LOESS for non-linear trends, can also use 'lm' or 'glm'
@@ -88,7 +104,7 @@ myplot <- myplot +
 ``` r
 myplot <- myplot +
   guides(shape = guide_legend(
-    override.aes = list(alpha = 0) # alpha == 0 >> 100% transparent legend background
+    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
     )) 
 ```
 
@@ -142,7 +158,7 @@ myplot <- myplot +
     geom = 'rect', # highlight an area of your graph
     xmin = 33, xmax = 55,
     ymin = 19.85, ymax = 20,
-    alpha = 0.2,    # transparency of rectangle
+    alpha = 0.2,    # transparency of rectangle (0 == most, 1 == least)
     fill = 'green', # color of rectangle
     col = NA)       # color of outline, NA == no outline
 ```
@@ -165,7 +181,7 @@ myplot
 .png, .pdf, etc.)
 
 ``` r
-ggsave(filename = 'C:/temp/wisdom_age_plot.jpg', 
+ggsave(filename = 'wisdom_age_plot.jpg', 
        plot = myplot, 
        width = 10, 
        height = 6, 
