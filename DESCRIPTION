@@ -13,8 +13,11 @@ Roxygen: list(markdown = TRUE)
 Imports: 
     ggplot2
 Suggests:    
+    data.table, 
     knitr, 
-    quarto (>= 1.4)
+    quarto (>= 1.4),
+    RColorBrewer, 
+    scales
 Depends: 
     R (>= 4.0)
 
