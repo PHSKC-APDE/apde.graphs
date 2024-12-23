@@ -1,10 +1,10 @@
 # Scatter Plots
 
 
-This example demonstrates `ggplot2` code by building a scatter plot
-step-by-step. While you would typically write all components in a single
-code block using `+` to connect elements, breaking it down helps
-illustrate how each piece contributes to the final visualization.
+This is a step-by-step guide to building a scatter plot with `ggplot2`.
+While you would typically write all components in a single code block
+using `+` to connect elements, we hope splitting the code will
+illustrate how each snippet contributes to the final visualization.
 
 ## Load libraries
 
@@ -14,63 +14,42 @@ library(data.table)
 library(apde.graphs)
 ```
 
-## Generate synthetic data
-
-Don’t worry about understanding this section of code. This is just to
-create a dataset in order to demonstrate the graphing code.
+## Import & preview synthetic data
 
 ``` r
-set.seed(98104) # necessary to get same 'random' results each time
-
-n_points <- 1000
-
-dt <- data.table(
-  age = runif(n_points, 10, 70), # random ages between 10 and 70
-  group = sample(c('Group 1', 'Group 2'), n_points, replace = TRUE)
-)
-
-# Add 'wisdom' scores with different peaks for each group
-dt[group == 'Group 1',
-   wisdom := 20 + 60 * dnorm(age, 40, 25) + # a normal curve
-     rnorm(.N, 0, 0.2)] # add random noise
-
-dt[group == 'Group 2',
-   wisdom := 20 + 60 * dnorm(age, 50, 20) +
-     rnorm(.N, 0, 0.2)]
-```
-
-Here is a peek at the data. Note that, in general, `ggplot2` works best
-with data in long format.
-
-``` r
+dt <- apde.graphs::wisdomDT
 head(dt)
 ```
 
-|      age | group   |   wisdom |
-|---------:|:--------|---------:|
-| 38.51950 | Group 2 | 20.71231 |
-| 69.30170 | Group 2 | 20.67414 |
-| 36.74943 | Group 2 | 20.55398 |
-| 39.77599 | Group 1 | 20.63184 |
-| 16.36703 | Group 2 | 20.32795 |
-| 21.18335 | Group 1 | 20.61924 |
+| age | group   | wisdom_score |
+|----:|:--------|-------------:|
+|  39 | Group 2 |     20.72610 |
+|  69 | Group 2 |     20.68507 |
+|  37 | Group 2 |     20.56191 |
+|  40 | Group 1 |     20.63188 |
+|  16 | Group 2 |     20.31905 |
+|  21 | Group 1 |     20.61525 |
 
 ## Create the base `ggplot2` scatter plot
 
 ``` r
 myplot <- ggplot(dt, aes(x = age,
-                         y = wisdom,
+                         y = wisdom_score,
                          color = group,    # different color for each group
                          shape = group)) + # different shape for each group
+  
   # Basic scatter plot
   geom_point(alpha = 0.3,  # Transparency of dots (0 == most, 1 == least)
              size = 3) +   # dot size
+  
   # Add smoothed fit lines with confidence intervals
   geom_smooth(method = 'loess',    # LOESS for non-linear trends, can also use 'lm' or 'glm'
               se = TRUE,           # Show CI
               alpha = 0.2,         # Transparency of CI (0 == most, 1 == least)
               linewidth = 1.2)     # Line thickness
 ```
+
+![](scatter_plot_files/figure-commonmark/display_base_plot-1.png)
 
 ## Define scales (colors and shapes)
 
@@ -84,6 +63,8 @@ myplot <- myplot +
   scale_shape_manual(values = c('Group 1' = 1,  # 1 is hollow circle
                                 'Group 2' = 2)) # 2 is hollow triangle
 ```
+
+![](scatter_plot_files/figure-commonmark/display_with_scales-1.png)
 
 ## Add labels
 
@@ -99,14 +80,7 @@ myplot <- myplot +
   )
 ```
 
-## Add legend customizations
-
-``` r
-myplot <- myplot +
-  guides(shape = guide_legend(
-    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
-    )) 
-```
+![](scatter_plot_files/figure-commonmark/display_with_labels-1.png)
 
 ## Add APDE customizations
 
@@ -121,6 +95,19 @@ myplot <- myplot +
   theme_apde()
 ```
 
+![](scatter_plot_files/figure-commonmark/display_with_custom_themes-1.png)
+
+## Add legend transparency
+
+``` r
+myplot <- myplot +
+  guides(shape = guide_legend(
+    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
+    ))
+```
+
+![](scatter_plot_files/figure-commonmark/display_with_custom_legends-1.png)
+
 ## Add vertical reference line
 
 ``` r
@@ -131,6 +118,8 @@ myplot <- myplot +
              linewidth = 1,
              color = '#1B9E77')
 ```
+
+![](scatter_plot_files/figure-commonmark/display_with_vertical_line-1.png)
 
 ## Add annotations
 
@@ -143,8 +132,8 @@ myplot <- myplot +
     size = 4,
     x = 34, y = 19.9, # set coordinates based on the scale in your graphic
     label = '50 = peak wisdom for group 2',
-    hjust = 0,
-    vjust = 0) +
+    hjust = 0,    # horizontal justification
+    vjust = 0) +  # vertical justification
   
   # point to something with an arrow
   annotate(
@@ -163,16 +152,6 @@ myplot <- myplot +
     col = NA)       # color of outline, NA == no outline
 ```
 
-## Display the plot
-
-``` r
-# Note: The message 'geom_smooth() using formula = y ~ x' is normal - 
-# it just confirms the default smoothing formula being used
-myplot
-```
-
-    `geom_smooth()` using formula = 'y ~ x'
-
 ![](scatter_plot_files/figure-commonmark/display_plot-1.png)
 
 ## Save the plot
@@ -189,4 +168,4 @@ ggsave(filename = 'wisdom_age_plot.jpg',
        units = 'in') # also 'cm', 'mm', 'px'
 ```
 
-– *Updated by dcolombara, 2024-12-04*
+– *Updated by dcolombara, 2024-12-23*

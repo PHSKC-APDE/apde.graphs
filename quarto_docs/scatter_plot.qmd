@@ -10,7 +10,7 @@ knitr:
 df-print: kable
 ---
 
-This example demonstrates `ggplot2` code by building a scatter plot step-by-step. While you would typically write all components in a single code block using `+` to connect elements, breaking it down helps illustrate how each piece contributes to the final visualization.
+This is a step-by-step guide to building a scatter plot with `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
 
 ## Load libraries
 
@@ -22,32 +22,10 @@ library(data.table)
 library(apde.graphs)
 ```
 
-## Generate synthetic data
+## Import & preview synthetic data
 
-Don't worry about understanding this section of code. This is just to create a dataset in order to demonstrate the graphing code.
-
-```{r generate_data}
-set.seed(98104) # necessary to get same 'random' results each time
-
-n_points <- 1000
-
-dt <- data.table(
-  age = runif(n_points, 10, 70), # random ages between 10 and 70
-  group = sample(c('Group 1', 'Group 2'), n_points, replace = TRUE)
-)
-
-# Add 'wisdom' scores with different peaks for each group
-dt[group == 'Group 1',
-   wisdom := 20 + 60 * dnorm(age, 40, 25) + # a normal curve
-     rnorm(.N, 0, 0.2)] # add random noise
-
-dt[group == 'Group 2',
-   wisdom := 20 + 60 * dnorm(age, 50, 20) +
-     rnorm(.N, 0, 0.2)]
-```
-
-Here is a peek at the data. Note that, in general, `ggplot2` works best with data in long format. 
-```{r view_table}
+```{r import_data}
+dt <- apde.graphs::wisdomDT
 head(dt)
 ```
 
@@ -55,17 +33,29 @@ head(dt)
 
 ```{r base_plot}
 myplot <- ggplot(dt, aes(x = age,
-                         y = wisdom,
+                         y = wisdom_score,
                          color = group,    # different color for each group
                          shape = group)) + # different shape for each group
+  
   # Basic scatter plot
   geom_point(alpha = 0.3,  # Transparency of dots (0 == most, 1 == least)
              size = 3) +   # dot size
+  
   # Add smoothed fit lines with confidence intervals
   geom_smooth(method = 'loess',    # LOESS for non-linear trends, can also use 'lm' or 'glm'
               se = TRUE,           # Show CI
               alpha = 0.2,         # Transparency of CI (0 == most, 1 == least)
               linewidth = 1.2)     # Line thickness
+```
+
+```{r display_base_plot}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
 ```
 
 ## Define scales (colors and shapes)
@@ -79,6 +69,16 @@ myplot <- myplot +
   # Custom dot shapes: options are 1:25
   scale_shape_manual(values = c('Group 1' = 1,  # 1 is hollow circle
                                 'Group 2' = 2)) # 2 is hollow triangle
+```
+
+```{r display_with_scales}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
 ```
 
 ## Add labels
@@ -95,13 +95,14 @@ myplot <- myplot +
   )
 ```
 
-## Add legend customizations
+```{r display_with_labels}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
 
-```{r add_legend_customization}
-myplot <- myplot +
-  guides(shape = guide_legend(
-    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
-    )) 
+myplot
 ```
 
 ## Add APDE customizations
@@ -118,6 +119,35 @@ myplot <- myplot +
   theme_apde()
 ```
 
+```{r display_with_custom_themes}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
+```
+
+## Add legend transparency
+
+```{r add_legend_customization}
+myplot <- myplot +
+  guides(shape = guide_legend(
+    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
+    ))
+```
+
+```{r display_with_custom_legends}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
+```
+
 ## Add vertical reference line
 
 ```{r add_ref_line}
@@ -127,6 +157,16 @@ myplot <- myplot +
              linetype = 'dotted', # also 'solid', 'dashed', 'dotdash', 'longdash', and 'twodash'
              linewidth = 1,
              color = '#1B9E77')
+```
+
+```{r display_with_vertical_line}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
 ```
 
 ## Add annotations
@@ -140,8 +180,8 @@ myplot <- myplot +
     size = 4,
     x = 34, y = 19.9, # set coordinates based on the scale in your graphic
     label = '50 = peak wisdom for group 2',
-    hjust = 0,
-    vjust = 0) +
+    hjust = 0,    # horizontal justification
+    vjust = 0) +  # vertical justification
   
   # point to something with an arrow
   annotate(
@@ -160,15 +200,13 @@ myplot <- myplot +
     col = NA)       # color of outline, NA == no outline
 ```
 
-## Display the plot
-
 ```{r display_plot}
 #| fig-width: 10 
 #| fig-height: 6 
-#| dpi: 300 
+#| dpi: 150 
+#| message: false
+#| echo: false
 
-# Note: The message 'geom_smooth() using formula = y ~ x' is normal - 
-# it just confirms the default smoothing formula being used
 myplot
 ```
 
