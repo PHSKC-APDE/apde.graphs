@@ -20,53 +20,13 @@ This example demonstrates `ggplot2` code by building a bar plot step-by-step. Wh
 library(ggplot2)
 library(apde.graphs)
 library(data.table)
-library(RColorBrewer)  # For colorblind-safe colors
 library(scales) # to label axes with $, %, etc. 
 ```
 
-## View available colorblind-safe palettes
-
-```{r view_palettes}
-#| echo: true
-#| output: true
-#| fig-width: 10
-#| fig-height: 6.5
-#| dpi: 300 
-display.brewer.all(colorblindFriendly = TRUE) 
-```
-
-## Generate synthetic data
-
-Don't worry about understanding this section of code. This is just to create a dataset in order to demonstrate the graphing code.
+## Import & preview synthetic data
 
 ```{r generate_data}
-set.seed(98104)
-
-# Create base data
-years <- c(1980, 1990, 2000, 2010, 2020)
-flavors <- c("Vanilla", "Chocolate", "Other")
-
-# Function to generate mean incomes with trend
-generate_income <- function(years, base, slope) {
-  base + (years - 1980) * slope + rnorm(length(years), 0, 500)
-}
-
-# Create table of years and flavors
-dt <- CJ(year = years, flavor = flavors)
-dt[, flavor := factor(flavor, levels = c("Chocolate", "Vanilla", "Other"))] # to ensure graph order
-
-# Generate means and standard errors
-dt[flavor == "Vanilla", mean_income := generate_income(year, base = 75000, slope = 50)]
-dt[flavor == "Chocolate", mean_income := generate_income(year, base = 70000, slope = 200)]
-dt[flavor == "Other", mean_income := generate_income(year, base = 65000, slope = 500)]
-
-# Add standard errors (random sizes)
-dt[, se := runif(15, 1500, 5000)]
-```
-
-Here is a peek at the data. Note that, in general, `ggplot2` works best with data in long format.
-
-```{r view_table}
+dt <- apde.graphs::icecreamDT
 head(dt)
 ```
 
@@ -78,14 +38,38 @@ ice_cream_plot <- ggplot(dt, aes(x = factor(year),
                                  fill = flavor)) +  # different color for each flavor
   # Basic bar plot
   geom_col(position = position_dodge(width = 0.8),  # adjust horizontally to show groups
-           width = 0.7) +                           # adjust bar width
-  
-  # Add error bars with confidence intervals
+           width = 0.7)                             # adjust bar width
+```
+
+```{r display_base_plot}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add error bars to show uncertainty (95% confidence intervals)
+
+```{r error_bars}
+ice_cream_plot <- ice_cream_plot + 
   geom_errorbar(aes(ymin = mean_income - 1.96*se,   # lower bound CI
                     ymax = mean_income + 1.96*se),  # upper bound CI
-                position = position_dodge(width = 0.8),
+                position = position_dodge(width = 0.8), # adjust horizontally to align with bars
                 linewidth = 1, # width of the error bar
                 width = 0)     # width of the horizontal lines at the ends of the bar
+```
+
+```{r display_error_bars}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
 ```
 
 ## Add colors and scales
@@ -103,6 +87,16 @@ ice_cream_plot <- ice_cream_plot +
   )
 ```
 
+```{r display_colors_scales}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
 ## Add labels
 
 ```{r add_labels}
@@ -111,10 +105,18 @@ ice_cream_plot <- ice_cream_plot +
     title = 'Mean Income by Ice Cream Preference',
     subtitle = 'Non-representative Sample of Megalopolis Residents',
     x = 'Year',
-    y = 'Mean Income (2020 dollars)',
-    caption = paste0('Health Sciences, APDE: ', format(Sys.Date(), '%B %d, %Y'),
-                    '\nData source: Synthetic dataset')
+    y = 'Mean Income (2020 dollars)'
   )
+```
+
+```{r display_labels}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
 ```
 
 ## Add APDE customizations
@@ -131,6 +133,16 @@ ice_cream_plot <- ice_cream_plot +
   theme_apde()
 ```
 
+```{r display_apde}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
 ## Add horizontal reference line
 
 ```{r add_hline}
@@ -140,6 +152,16 @@ ice_cream_plot <- ice_cream_plot +
              linetype = 'dashed', # also 'solid', 'dashed', 'dotdash', 'longdash', and 'twodash'
              linewidth = 1,
              color = 'red') 
+```
+
+```{r display_hline}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
 ```
 
 ## Add annotations
@@ -152,7 +174,7 @@ ice_cream_plot <- ice_cream_plot +
     x = 5,
     y = 95000,
     label = "Steepest increase\nfor 'Other' flavor",
-    hjust = 1
+    hjust = 1  # horizontal justification
   ) + 
   
   # Add arrow pointing to steepest increase
@@ -163,22 +185,23 @@ ice_cream_plot <- ice_cream_plot +
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   
-  # Add a box around the text
+  # Add a shaded box around the text
   annotate(
     geom = 'rect',        # highlight an area of your graph
     xmin = 4, xmax = 5.2, 
-    ymin = 91000, ymax = 99000,
+    ymin = 90000, ymax = 100000,
     alpha = 0.2,          # transparency (0 == most, 1 == least)
     fill = 'green',       # color of box 
     col = NA)             # color of box outline
 ```
 
-## Display the plot
-
-```{r display_plot}
+```{r display_annotated}
 #| fig-width: 10 
 #| fig-height: 6 
-#| dpi: 300 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
 ice_cream_plot
 ```
 

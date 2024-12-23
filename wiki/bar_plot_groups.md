@@ -12,63 +12,24 @@ illustrate how each piece contributes to the final visualization.
 library(ggplot2)
 library(apde.graphs)
 library(data.table)
-library(RColorBrewer)  # For colorblind-safe colors
 library(scales) # to label axes with $, %, etc. 
 ```
 
-## View available colorblind-safe palettes
+## Import & preview synthetic data
 
 ``` r
-display.brewer.all(colorblindFriendly = TRUE) 
-```
-
-![](bar_plot_groups_files/figure-commonmark/view_palettes-1.png)
-
-## Generate synthetic data
-
-Don’t worry about understanding this section of code. This is just to
-create a dataset in order to demonstrate the graphing code.
-
-``` r
-set.seed(98104)
-
-# Create base data
-years <- c(1980, 1990, 2000, 2010, 2020)
-flavors <- c("Vanilla", "Chocolate", "Other")
-
-# Function to generate mean incomes with trend
-generate_income <- function(years, base, slope) {
-  base + (years - 1980) * slope + rnorm(length(years), 0, 500)
-}
-
-# Create table of years and flavors
-dt <- CJ(year = years, flavor = flavors)
-dt[, flavor := factor(flavor, levels = c("Chocolate", "Vanilla", "Other"))] # to ensure graph order
-
-# Generate means and standard errors
-dt[flavor == "Vanilla", mean_income := generate_income(year, base = 75000, slope = 50)]
-dt[flavor == "Chocolate", mean_income := generate_income(year, base = 70000, slope = 200)]
-dt[flavor == "Other", mean_income := generate_income(year, base = 65000, slope = 500)]
-
-# Add standard errors (random sizes)
-dt[, se := runif(15, 1500, 5000)]
-```
-
-Here is a peek at the data. Note that, in general, `ggplot2` works best
-with data in long format.
-
-``` r
+dt <- apde.graphs::icecreamDT
 head(dt)
 ```
 
-| year | flavor    | mean_income |       se |
-|-----:|:----------|------------:|---------:|
-| 1980 | Chocolate |    69930.63 | 2341.681 |
-| 1980 | Other     |    65656.23 | 2908.696 |
-| 1980 | Vanilla   |    74969.05 | 2359.591 |
-| 1990 | Chocolate |    71790.57 | 1953.702 |
-| 1990 | Other     |    70696.61 | 1707.939 |
-| 1990 | Vanilla   |    75431.89 | 2148.133 |
+| year | flavor    | mean_income |   se |
+|-----:|:----------|------------:|-----:|
+| 1980 | Chocolate |       69931 | 2342 |
+| 1980 | Other     |       65656 | 2909 |
+| 1980 | Vanilla   |       74969 | 2360 |
+| 1990 | Chocolate |       71791 | 1954 |
+| 1990 | Other     |       70697 | 1708 |
+| 1990 | Vanilla   |       75432 | 2148 |
 
 ## Create the base `ggplot2` bar plot
 
@@ -78,15 +39,23 @@ ice_cream_plot <- ggplot(dt, aes(x = factor(year),
                                  fill = flavor)) +  # different color for each flavor
   # Basic bar plot
   geom_col(position = position_dodge(width = 0.8),  # adjust horizontally to show groups
-           width = 0.7) +                           # adjust bar width
-  
-  # Add error bars with confidence intervals
+           width = 0.7)                             # adjust bar width
+```
+
+![](bar_plot_groups_files/figure-commonmark/display_base_plot-1.png)
+
+## Add error bars to show uncertainty (95% confidence intervals)
+
+``` r
+ice_cream_plot <- ice_cream_plot + 
   geom_errorbar(aes(ymin = mean_income - 1.96*se,   # lower bound CI
                     ymax = mean_income + 1.96*se),  # upper bound CI
-                position = position_dodge(width = 0.8),
+                position = position_dodge(width = 0.8), # adjust horizontally to align with bars
                 linewidth = 1, # width of the error bar
                 width = 0)     # width of the horizontal lines at the ends of the bar
 ```
+
+![](bar_plot_groups_files/figure-commonmark/display_error_bars-1.png)
 
 ## Add colors and scales
 
@@ -103,6 +72,8 @@ ice_cream_plot <- ice_cream_plot +
   )
 ```
 
+![](bar_plot_groups_files/figure-commonmark/display_colors_scales-1.png)
+
 ## Add labels
 
 ``` r
@@ -111,11 +82,11 @@ ice_cream_plot <- ice_cream_plot +
     title = 'Mean Income by Ice Cream Preference',
     subtitle = 'Non-representative Sample of Megalopolis Residents',
     x = 'Year',
-    y = 'Mean Income (2020 dollars)',
-    caption = paste0('Health Sciences, APDE: ', format(Sys.Date(), '%B %d, %Y'),
-                    '\nData source: Synthetic dataset')
+    y = 'Mean Income (2020 dollars)'
   )
 ```
+
+![](bar_plot_groups_files/figure-commonmark/display_labels-1.png)
 
 ## Add APDE customizations
 
@@ -130,6 +101,8 @@ ice_cream_plot <- ice_cream_plot +
   theme_apde()
 ```
 
+![](bar_plot_groups_files/figure-commonmark/display_apde-1.png)
+
 ## Add horizontal reference line
 
 ``` r
@@ -141,6 +114,8 @@ ice_cream_plot <- ice_cream_plot +
              color = 'red') 
 ```
 
+![](bar_plot_groups_files/figure-commonmark/display_hline-1.png)
+
 ## Add annotations
 
 ``` r
@@ -151,7 +126,7 @@ ice_cream_plot <- ice_cream_plot +
     x = 5,
     y = 95000,
     label = "Steepest increase\nfor 'Other' flavor",
-    hjust = 1
+    hjust = 1  # horizontal justification
   ) + 
   
   # Add arrow pointing to steepest increase
@@ -162,23 +137,17 @@ ice_cream_plot <- ice_cream_plot +
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   
-  # Add a box around the text
+  # Add a shaded box around the text
   annotate(
     geom = 'rect',        # highlight an area of your graph
     xmin = 4, xmax = 5.2, 
-    ymin = 91000, ymax = 99000,
+    ymin = 90000, ymax = 100000,
     alpha = 0.2,          # transparency (0 == most, 1 == least)
     fill = 'green',       # color of box 
     col = NA)             # color of box outline
 ```
 
-## Display the plot
-
-``` r
-ice_cream_plot
-```
-
-![](bar_plot_groups_files/figure-commonmark/display_plot-1.png)
+![](bar_plot_groups_files/figure-commonmark/display_annotated-1.png)
 
 ## Save the plot
 
@@ -193,4 +162,4 @@ ggsave(filename = 'income_by_ice_cream_preference.jpg', # filename with extensio
        dpi = 600)                                       # resolution in dots per inch
 ```
 
-– *Updated by dcolombara, 2024-12-04*
+– *Updated by dcolombara, 2024-12-23*
