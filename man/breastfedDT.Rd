@@ -7,6 +7,7 @@
 \format{
 A data.table with demographic categories and associated statistics:
 \describe{
+\item{tab}{Character. Type of data (i.e., 'demgroups' or 'trends')}
 \item{indicator_key}{Character. Indicator name ("breastfed")}
 \item{year}{Numeric. Year of measurement}
 \item{cat1}{Factor. Main demographic category (e.g., "Race", "Age", "Education")}

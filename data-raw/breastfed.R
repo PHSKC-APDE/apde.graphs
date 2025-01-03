@@ -25,11 +25,11 @@ wip <- odbc::dbConnect(odbc::odbc(),
 
 # Pull data fromn server ----
 breastfedDT = setDT(DBI::dbGetQuery(wip,
-                          "SELECT indicator_key, year, cat1, cat1_group, cat1_varname,
+                          "SELECT tab, indicator_key, year, cat1, cat1_group, cat1_varname,
                           result, lower_bound, upper_bound, significance, caution, suppression
                           FROM APDE_WIP.birth_results
                           WHERE indicator_key = 'breastfed' AND
-                          tab = 'demgroups' AND
+                          tab IN ('demgroups', 'trends') AND
                           cat1 NOT LIKE '%detailed race%' AND
                           cat1 != 'Cities/neighborhoods'"))
 
