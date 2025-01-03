@@ -10,7 +10,7 @@ knitr:
 df-print: kable
 ---
 
-This guide demonstrates building a [CHI](https://kingcounty.gov/chi) style demographics plot with `ggplot2`. Each code section shows how specific elements contribute to the final visualization. This style is particularly useful for comparing demographic categories and their subgroups, with confidence intervals and significance markers.
+This is a step-by-step guide to building a [CHI](https://kingcounty.gov/chi) style demographics plot with `ggplot2`. While you would typically write all components in a single code block using + to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
 
 ## Load libraries
 
@@ -31,6 +31,7 @@ The breastfedDT dataset is a synthetic dataset included in the apde.graphs packa
 
 ```{r import_data}
 dt <- apde.graphs::breastfedDT
+dt <- dt[tab == 'demgroups']
 head(dt)
 ```
 
@@ -157,13 +158,13 @@ myplot
 
 ## Add suppression markers
 
-Placement of suppression markers at 5% is arbitrary and was chosen to make it readily visible.
+Placement of suppression markers at 1% is arbitrary and was chosen to make it readily visible.
 
 ```{r add_suppression}
 myplot <- myplot +
   # Add suppression markers with offset
   geom_text(data = dt[!is.na(suppression)],
-            aes(y = 0.05, label = suppression),  # Offset to 5% of scale
+            aes(y = 0.01, label = suppression),  # Offset to 1% of scale
             hjust = 0)
 ```
 
@@ -185,7 +186,7 @@ myplot <- myplot +
   facet_grid(cat1 ~ ., # split rows by cat1
              scales = "free_y", # each facet can have different y-axis scale
              space = "free_y",  # facet heights proportional to number of groups
-             switch = "y")      # move facet labels to left side 
+             switch = "y")      # move facet labels to left side of graph
 ```
 
 ```{r display_with_strips}
@@ -198,8 +199,6 @@ myplot
 ```
 
 ## Set title, axes, and legend labels
-
-Remove axis labels since they're redundant with the facet labels.
 
 ```{r title_legend_axes}
 #| echo: true
