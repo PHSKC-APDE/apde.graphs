@@ -14,7 +14,7 @@ A data.table with 15 rows and 5 columns:
 }
 }
 \source{
-Generated using synthetic data with seed 98104 for reproducibility.
+Generated using synthetic data.
 Created specifically for demonstrating ggplot2 visualization techniques
 including line plots, error bars, and trend analysis.
 }
@@ -34,13 +34,6 @@ The dataset is synthetically generated with the following characteristics:
 \item Incomes trend upward over time with different slopes
 \item Random noise added to simulate real-world variability
 \item Flavor factor levels are ordered: Chocolate, Vanilla, Other
-}
-
-Income generation details:
-\itemize{
-\item Vanilla: Base at $75,000, slight upward trend
-\item Chocolate: Base at $70,000, moderate upward trend
-\item Other: Base at $65,000, steeper upward trend
 }
 }
 \examples{

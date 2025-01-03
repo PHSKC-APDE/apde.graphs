@@ -15,7 +15,6 @@ plus up to 60 points following a normal distribution, with added random noise}
 }
 }
 \source{
-Generated using synthetic data with seed 98104 for reproducibility.
 Created specifically for demonstrating ggplot2 visualization techniques
 including scatter plots, smoothed trend lines, and various plot customizations.
 }
@@ -34,19 +33,19 @@ parameters for each group:
 \itemize{
 \item Group 1: Peak wisdom around age 40 with standard deviation of 25
 \item Group 2: Peak wisdom around age 50 with standard deviation of 20
-Random noise (normal distribution with mean 0 and SD 0.2) is added to create
+Random noise is added to create
 more realistic variation.
 }
 }
 \examples{
 # Basic scatter plot of wisdom by age
 library(ggplot2)
-ggplot(wisdomDT, aes(x = age, y = wisdom, color = group)) +
+ggplot(wisdomDT, aes(x = age, y = wisdom_score, color = group)) +
   geom_point(alpha = 0.3)
 
 # Calculate mean wisdom by group
 library(data.table)
-wisdomDT[, .(mean_wisdom = mean(wisdom)), by = group]
+wisdomDT[, .(mean_wisdom = mean(wisdom_score)), by = group]
 
 }
 \keyword{datasets}

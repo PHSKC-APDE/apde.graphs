@@ -84,7 +84,7 @@ myplot <- myplot +
 
 ## Add APDE customizations
 
-The `apde_caption()` and `theme_apde()` elements are from the
+The `apde_caption()` and `apde_theme()` elements are from the
 `apde.graphs` package, not `ggplot2`.
 
 ``` r
@@ -92,7 +92,7 @@ myplot <- myplot +
   
   apde_caption(data_source = 'Synthetic dataset') +
   
-  theme_apde()
+  apde_theme()
 ```
 
 ![](scatter_plot_files/figure-commonmark/display_with_custom_themes-1.png)
@@ -168,4 +168,4 @@ ggsave(filename = 'wisdom_age_plot.jpg',
        units = 'in') # also 'cm', 'mm', 'px'
 ```
 
-– *Updated by dcolombara, 2024-12-23*
+– *Updated by dcolombara, 2025-01-02*

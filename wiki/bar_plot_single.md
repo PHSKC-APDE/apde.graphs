@@ -63,7 +63,7 @@ plot_agg <- ggplot(dt_agg, aes(x = city,
   geom_bar(stat = "identity") # geom_col() would be equivalent
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_base1-1.png)
+![](bar_plot_single_files/figure-commonmark/display_base1-1.png)
 
 ### Line-level data (use *`stat = 'summary'`*)
 
@@ -77,7 +77,7 @@ plot_raw <- ggplot(dt_raw, aes(x = city,
            fun = "mean")      # fun = "mean" specifies we want the mean of all observations per city
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_base2-1.png)
+![](bar_plot_single_files/figure-commonmark/display_base2-1.png)
 
 ***Note!** when you have `geom_bar(stat = 'summary', fun = ...)`,
 `fun =` can take the following built-in options: “mean”, “median”,
@@ -103,7 +103,7 @@ plot_raw <- plot_raw +
     )
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_with_scales-1.png)
+![](bar_plot_single_files/figure-commonmark/display_with_scales-1.png)
 
 ## Add labels
 
@@ -117,21 +117,21 @@ plot_raw <- plot_raw +
     )
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_with_labels-1.png)
+![](bar_plot_single_files/figure-commonmark/display_with_labels-1.png)
 
 ## Add APDE customizations
 
-The `apde_caption()`, `theme_apde()`, and `rotate_x_labels()` elements
+The `apde_caption()`, `apde_theme()`, and `apde_rotate_xlab()` elements
 are from the `apde.graphs` package, not `ggplot2`.
 
 ``` r
 plot_raw <- plot_raw +
     apde_caption(data_source = 'Synthetic dataset') +
-    theme_apde() +
-    rotate_x_labels() # pivots x-axis labels by 45 degrees to reduce crowding
+    apde_theme() +
+    apde_rotate_xlab() # pivots x-axis labels by 45 degrees to reduce crowding
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_with_theme-1.png)
+![](bar_plot_single_files/figure-commonmark/display_with_theme-1.png)
 
 ## Drop legend since it is not useful in this graph
 
@@ -140,7 +140,7 @@ plot_raw <- plot_raw +
   theme(legend.position = 'none')
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_with_tweaked_theme-1.png)
+![](bar_plot_single_files/figure-commonmark/display_with_tweaked_theme-1.png)
 
 ## Add horizontal reference line
 
@@ -152,7 +152,7 @@ plot_raw <- plot_raw +
                color = 'red')
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_with_ref_line-1.png)
+![](bar_plot_single_files/figure-commonmark/display_with_ref_line-1.png)
 
 ## Add annotations
 
@@ -191,18 +191,18 @@ plot_annotated <- plot_raw +
 
 ## Display the annotated plot
 
-![](bar_plot_highlighted_files/figure-commonmark/display_annotated-1.png)
+![](bar_plot_single_files/figure-commonmark/display_annotated-1.png)
 
 ## Create horizontal (rotated) version
 
 ``` r
 plot_horizontal <- plot_raw + 
   coord_flip() + # rotates the entire plot
-  rotate_x_labels(angle = 0,   # rotated x axis labels not needed for horizontal version
+  apde_rotate_xlab(angle = 0,   # rotated x axis labels not needed for horizontal version
                   hjust = 0.5) # horizontal justification
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_horizontal-1.png)
+![](bar_plot_single_files/figure-commonmark/display_horizontal-1.png)
 
 Notice that the y-axis is now in reverse alphabetical order. To reverse
 this order, you will have to reverse the order of the `city` factor
@@ -216,11 +216,11 @@ city_order <- sort(unique(plot_raw$data$city), decreasing = TRUE)
 plot_horizontal <- plot_raw + 
   scale_x_discrete(limits = city_order) +
   coord_flip() + # rotates the entire plot
-  rotate_x_labels(angle = 0,    # rotated x axis labels not needed for horizontal version
+  apde_rotate_xlab(angle = 0,    # rotated x axis labels not needed for horizontal version
                   hjust = 0.5)  # horizontal justification
 ```
 
-![](bar_plot_highlighted_files/figure-commonmark/display_horizontal2-1.png)
+![](bar_plot_single_files/figure-commonmark/display_horizontal2-1.png)
 
 ## Save the plots
 
@@ -243,4 +243,4 @@ ggsave('ancient_cities_horizontal.jpg',
        dpi = 600)
 ```
 
-– *Updated by dcolombara, 2024-12-23*
+– *Updated by dcolombara, 2025-01-02*

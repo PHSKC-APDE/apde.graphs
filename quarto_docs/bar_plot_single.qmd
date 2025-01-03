@@ -137,15 +137,15 @@ plot_raw
 
 ## Add APDE customizations
 
-The `apde_caption()`, `theme_apde()`, and `rotate_x_labels()` elements are from the `apde.graphs` package, not `ggplot2`.
+The `apde_caption()`, `apde_theme()`, and `apde_rotate_xlab()` elements are from the `apde.graphs` package, not `ggplot2`.
 
 ```{r add_theme}
 #| echo: true
 #| output: false
 plot_raw <- plot_raw +
     apde_caption(data_source = 'Synthetic dataset') +
-    theme_apde() +
-    rotate_x_labels() # pivots x-axis labels by 45 degrees to reduce crowding
+    apde_theme() +
+    apde_rotate_xlab() # pivots x-axis labels by 45 degrees to reduce crowding
 ```
 
 ```{r display_with_theme}
@@ -247,7 +247,7 @@ plot_annotated
 ```{r create_horizontal}
 plot_horizontal <- plot_raw + 
   coord_flip() + # rotates the entire plot
-  rotate_x_labels(angle = 0,   # rotated x axis labels not needed for horizontal version
+  apde_rotate_xlab(angle = 0,   # rotated x axis labels not needed for horizontal version
                   hjust = 0.5) # horizontal justification
 ```
 
@@ -271,7 +271,7 @@ city_order <- sort(unique(plot_raw$data$city), decreasing = TRUE)
 plot_horizontal <- plot_raw + 
   scale_x_discrete(limits = city_order) +
   coord_flip() + # rotates the entire plot
-  rotate_x_labels(angle = 0,    # rotated x axis labels not needed for horizontal version
+  apde_rotate_xlab(angle = 0,    # rotated x axis labels not needed for horizontal version
                   hjust = 0.5)  # horizontal justification
 ```
 

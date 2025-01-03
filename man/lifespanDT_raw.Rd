@@ -13,7 +13,6 @@ Carthage, Pataliputra, Persepolis, Rome, Thebes, Xian}
 }
 }
 \source{
-Generated using synthetic data with seed 98104 for reproducibility.
 Created specifically for demonstrating ggplot2 visualization techniques
 including distribution plots, box plots, and comparative analyses.
 }
@@ -22,15 +21,12 @@ data(lifespanDT_raw)
 }
 \description{
 A synthetic raw dataset representing lifespans in various ancient cities.
-The data is designed to demonstrate various ggplot2 visualization techniques.
 }
 \details{
 The dataset features synthetic lifespan data with the following characteristics:
 \itemize{
 \item 1,000 individual lifespan records for each city
-\item Lifespans generated using normal distribution
 \item Mean lifespans randomly generated between 38 and 57 years
-\item Standard deviation of 5 years to simulate population variability
 }
 }
 \examples{

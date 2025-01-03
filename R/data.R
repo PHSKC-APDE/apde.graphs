@@ -1,3 +1,49 @@
+# breastfedDT ----
+#' Semi-synthetic Breastfeeding Initiation Dataset
+#'
+#' A dataset containing breastfeeding initiation rates by demographic groups, formatted
+#' for Community Health Indicators (CHI) style visualizations.
+#'
+#' @format A data.table with demographic categories and associated statistics:
+#' \describe{
+#'   \item{indicator_key}{Character. Indicator name ("breastfed")}
+#'   \item{year}{Numeric. Year of measurement}
+#'   \item{cat1}{Factor. Main demographic category (e.g., "Race", "Age", "Education")}
+#'   \item{cat1_group}{Factor. Subcategory within cat1}
+#'   \item{cat1_varname}{Character. Variable name for the category}
+#'   \item{result}{Numeric. Proportion who initiated breastfeeding}
+#'   \item{lower_bound}{Numeric. Lower bound of 95% confidence interval}
+#'   \item{upper_bound}{Numeric. Upper bound of 95% confidence interval}
+#'   \item{significance}{Character. "*" if significantly different from King County average}
+#'   \item{caution}{Character. "!" if estimate is imprecise due to small sample size}
+#'   \item{suppression}{Character. "^" if data suppressed for confidentiality}
+#' }
+#'
+#' @details The dataset includes:
+#' * Results suppressed for age group 45+
+#' * Caution flag for AIAN (American Indian/Alaska Native) estimates
+#' * Detailed race categories excluded
+#' * Cities/neighborhoods excluded
+#'
+#' @source Based on PHExtractStore.APDE_WIP.birth_results with minor modifications
+#'
+#' @examples
+#' # Basic CHI-style plot
+#' library(ggplot2)
+#' ggplot(breastfedDT, aes(x = cat1_group, y = result, fill = cat1)) +
+#'   geom_col() +
+#'   coord_flip() +
+#'   facet_grid(cat1 ~ ., scales = "free_y", space = "free_y")
+#'
+#' # View categories
+#' library(data.table)
+#' breastfedDT[, .N, cat1]
+#'
+#' @name breastfedDT
+#' @usage data(breastfedDT)
+#' @keywords datasets
+"breastfedDT"
+
 # icecreamDT ----
 #' Synthetic Income by Ice Cream Flavor Preferences Dataset
 #'
@@ -20,12 +66,7 @@
 #' * Random noise added to simulate real-world variability
 #' * Flavor factor levels are ordered: Chocolate, Vanilla, Other
 #'
-#' Income generation details:
-#' * Vanilla: Base at $75,000, slight upward trend
-#' * Chocolate: Base at $70,000, moderate upward trend
-#' * Other: Base at $65,000, steeper upward trend
-#'
-#' @source Generated using synthetic data with seed 98104 for reproducibility.
+#' @source Generated using synthetic data.
 #' Created specifically for demonstrating ggplot2 visualization techniques
 #' including line plots, error bars, and trend analysis.
 #'
@@ -49,8 +90,7 @@
 #' Aggregated Lifespan Dataset for Ancient Cities
 #'
 #' A synthetic aggregated dataset of mean lifespans across various ancient cities.
-#' Derived from the raw lifespan data, this dataset provides summary statistics
-#' ideal for demonstrating summary visualizations in ggplot2.
+#' Derived from `lifespanDT_raw`.
 #'
 #' @format A data.table with 8 rows and 2 columns:
 #' \describe{
@@ -59,12 +99,10 @@
 #' }
 #'
 #' @details The dataset is generated from individual-level synthetic lifespan data:
-#' * Aggregated from 1,000 individual records per city
 #' * Mean lifespans reflect synthetic population distributions
 #' * Cities include: Athens, Babylon, Carthage, Pataliputra, Persepolis, Rome, Thebes, Xian
 #'
-#' @source Generated using synthetic data with seed 98104 for reproducibility.
-#' Created for demonstrating ggplot2 summary visualization techniques.
+#' @source Created for demonstrating ggplot2 summary visualization techniques.
 #'
 #' @examples
 #' # Bar plot of mean lifespans
@@ -81,7 +119,6 @@
 #' Synthetic Lifespan Dataset for Ancient Cities
 #'
 #' A synthetic raw dataset representing lifespans in various ancient cities.
-#' The data is designed to demonstrate various ggplot2 visualization techniques.
 #'
 #' @format A data.table with 8,000 rows and 2 columns:
 #' \describe{
@@ -92,11 +129,9 @@
 #'
 #' @details The dataset features synthetic lifespan data with the following characteristics:
 #' * 1,000 individual lifespan records for each city
-#' * Lifespans generated using normal distribution
 #' * Mean lifespans randomly generated between 38 and 57 years
-#' * Standard deviation of 5 years to simulate population variability
 #'
-#' @source Generated using synthetic data with seed 98104 for reproducibility.
+#' @source
 #' Created specifically for demonstrating ggplot2 visualization techniques
 #' including distribution plots, box plots, and comparative analyses.
 #'
@@ -139,22 +174,22 @@
 #' parameters for each group:
 #' * Group 1: Peak wisdom around age 40 with standard deviation of 25
 #' * Group 2: Peak wisdom around age 50 with standard deviation of 20
-#' Random noise (normal distribution with mean 0 and SD 0.2) is added to create
+#' Random noise is added to create
 #' more realistic variation.
 #'
-#' @source Generated using synthetic data with seed 98104 for reproducibility.
+#' @source
 #' Created specifically for demonstrating ggplot2 visualization techniques
 #' including scatter plots, smoothed trend lines, and various plot customizations.
 #'
 #' @examples
 #' # Basic scatter plot of wisdom by age
 #' library(ggplot2)
-#' ggplot(wisdomDT, aes(x = age, y = wisdom, color = group)) +
+#' ggplot(wisdomDT, aes(x = age, y = wisdom_score, color = group)) +
 #'   geom_point(alpha = 0.3)
 #'
 #' # Calculate mean wisdom by group
 #' library(data.table)
-#' wisdomDT[, .(mean_wisdom = mean(wisdom)), by = group]
+#' wisdomDT[, .(mean_wisdom = mean(wisdom_score)), by = group]
 #'
 #' @name wisdomDT
 #' @usage data(wisdomDT)

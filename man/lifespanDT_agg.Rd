@@ -12,7 +12,6 @@ A data.table with 8 rows and 2 columns:
 }
 }
 \source{
-Generated using synthetic data with seed 98104 for reproducibility.
 Created for demonstrating ggplot2 summary visualization techniques.
 }
 \usage{
@@ -20,13 +19,11 @@ data(lifespanDT_agg)
 }
 \description{
 A synthetic aggregated dataset of mean lifespans across various ancient cities.
-Derived from the raw lifespan data, this dataset provides summary statistics
-ideal for demonstrating summary visualizations in ggplot2.
+Derived from \code{lifespanDT_raw}.
 }
 \details{
 The dataset is generated from individual-level synthetic lifespan data:
 \itemize{
-\item Aggregated from 1,000 individual records per city
 \item Mean lifespans reflect synthetic population distributions
 \item Cities include: Athens, Babylon, Carthage, Pataliputra, Persepolis, Rome, Thebes, Xian
 }

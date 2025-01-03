@@ -107,7 +107,7 @@ myplot
 
 ## Add APDE customizations
 
-The `apde_caption()` and `theme_apde()` elements are from the `apde.graphs` package, not `ggplot2`.
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
 
 ```{r add_theme}
 #| echo: true
@@ -116,7 +116,7 @@ myplot <- myplot +
   
   apde_caption(data_source = 'Synthetic dataset') +
   
-  theme_apde()
+  apde_theme()
 ```
 
 ```{r display_with_custom_themes}

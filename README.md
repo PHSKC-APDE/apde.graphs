@@ -5,9 +5,9 @@ To facilitate the creation of consistent visualizations using APDE's standard pl
 
 ## Core Features
 
-- `theme_apde()`: Our standard theme based on theme_minimal()
+- `apde_theme()`: Our standard theme based on theme_minimal()
 - `apde_caption()`: Add standardized APDE captions
-- `rotate_x_labels()`: Helper function for rotated axis labels
+- `apde_rotate_xlab()`: Helper function for rotated axis labels
 
 ## Installation
 

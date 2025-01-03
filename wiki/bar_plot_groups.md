@@ -90,7 +90,7 @@ ice_cream_plot <- ice_cream_plot +
 
 ## Add APDE customizations
 
-The `apde_caption()` and `theme_apde()` elements are from the
+The `apde_caption()` and `apde_theme()` elements are from the
 `apde.graphs` package, not `ggplot2`.
 
 ``` r
@@ -98,7 +98,7 @@ ice_cream_plot <- ice_cream_plot +
   
   apde_caption(data_source = 'Synthetic dataset') +
   
-  theme_apde()
+  apde_theme()
 ```
 
 ![](bar_plot_groups_files/figure-commonmark/display_apde-1.png)
@@ -162,4 +162,4 @@ ggsave(filename = 'income_by_ice_cream_preference.jpg', # filename with extensio
        dpi = 600)                                       # resolution in dots per inch
 ```
 
-– *Updated by dcolombara, 2024-12-23*
+– *Updated by dcolombara, 2025-01-02*
