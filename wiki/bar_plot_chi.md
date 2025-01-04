@@ -1,11 +1,11 @@
 # Horizontal Bar Plot with Groups and Confidence Intervals
 
 
-This guide demonstrates building a [CHI](https://kingcounty.gov/chi)
-style demographics plot with `ggplot2`. Each code section shows how
-specific elements contribute to the final visualization. This style is
-particularly useful for comparing demographic categories and their
-subgroups, with confidence intervals and significance markers.
+This is a step-by-step guide to building a
+[CHI](https://kingcounty.gov/chi) style demographics plot with
+`ggplot2`. While you would typically write all components in a single
+code block using + to connect elements, we hope splitting the code will
+illustrate how each snippet contributes to the final visualization.
 
 ## Load libraries
 
@@ -26,17 +26,18 @@ apde.graphs package for demonstration purposes.
 
 ``` r
 dt <- apde.graphs::breastfedDT
+dt <- dt[tab == 'demgroups']
 head(dt)
 ```
 
-| indicator_key | year | cat1 | cat1_group | cat1_varname | result | lower_bound | upper_bound | significance | caution | suppression |
-|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| breastfed | 2018-2022 | King County | King County | chi_geo_kc | 0.961 | 0.960 | 0.963 | NA | NA | NA |
-| breastfed | 2018-2022 | Big cities | Auburn city | bigcities | 0.946 | 0.941 | 0.952 | \* | NA | NA |
-| breastfed | 2018-2022 | Big cities | Bellevue city | bigcities | 0.977 | 0.974 | 0.981 | \* | NA | NA |
-| breastfed | 2018-2022 | Big cities | Federal Way city | bigcities | 0.956 | 0.951 | 0.961 | NA | NA | NA |
-| breastfed | 2018-2022 | Big cities | Kent city | bigcities | 0.944 | 0.939 | 0.949 | \* | NA | NA |
-| breastfed | 2018-2022 | Big cities | Kirkland city | bigcities | 0.981 | 0.978 | 0.985 | \* | NA | NA |
+| tab | indicator_key | year | cat1 | cat1_group | cat1_varname | result | lower_bound | upper_bound | significance | caution | suppression |
+|:---|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| demgroups | breastfed | 2018-2022 | King County | King County | chi_geo_kc | 0.961 | 0.960 | 0.963 | NA | NA | NA |
+| demgroups | breastfed | 2018-2022 | Big cities | Auburn city | bigcities | 0.946 | 0.941 | 0.952 | \* | NA | NA |
+| demgroups | breastfed | 2018-2022 | Big cities | Bellevue city | bigcities | 0.977 | 0.974 | 0.981 | \* | NA | NA |
+| demgroups | breastfed | 2018-2022 | Big cities | Federal Way city | bigcities | 0.956 | 0.951 | 0.961 | NA | NA | NA |
+| demgroups | breastfed | 2018-2022 | Big cities | Kent city | bigcities | 0.944 | 0.939 | 0.949 | \* | NA | NA |
+| demgroups | breastfed | 2018-2022 | Big cities | Kirkland city | bigcities | 0.981 | 0.978 | 0.985 | \* | NA | NA |
 
 ## Prepare data for plotting
 
@@ -129,14 +130,14 @@ myplot <- myplot +
 
 ## Add suppression markers
 
-Placement of suppression markers at 5% is arbitrary and was chosen to
+Placement of suppression markers at 1% is arbitrary and was chosen to
 make it readily visible.
 
 ``` r
 myplot <- myplot +
   # Add suppression markers with offset
   geom_text(data = dt[!is.na(suppression)],
-            aes(y = 0.05, label = suppression),  # Offset to 5% of scale
+            aes(y = 0.01, label = suppression),  # Offset to 1% of scale
             hjust = 0)
 ```
 
@@ -151,14 +152,12 @@ myplot <- myplot +
   facet_grid(cat1 ~ ., # split rows by cat1
              scales = "free_y", # each facet can have different y-axis scale
              space = "free_y",  # facet heights proportional to number of groups
-             switch = "y")      # move facet labels to left side 
+             switch = "y")      # move facet labels to left side of graph
 ```
 
 ![](bar_plot_chi_files/figure-commonmark/display_with_strips-1.png)
 
 ## Set title, axes, and legend labels
-
-Remove axis labels since they’re redundant with the facet labels.
 
 ``` r
 myplot <- myplot +

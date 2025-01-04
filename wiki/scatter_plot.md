@@ -168,4 +168,4 @@ ggsave(filename = 'wisdom_age_plot.jpg',
        units = 'in') # also 'cm', 'mm', 'px'
 ```
 
-– *Updated by dcolombara, 2025-01-02*
+– *Updated by dcolombara, 2025-01-03*

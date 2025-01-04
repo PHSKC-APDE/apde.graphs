@@ -45,6 +45,64 @@
 #' @keywords datasets
 "breastfedDT"
 
+# centroidsBigCities ----
+#' King County Major Cities Centroids
+#'
+#' A spatial dataset containing centroid points for major cities in King County.
+#' Derived from shapeBigCities.
+#'
+#' @format An sf (simple features) object containing city centroids:
+#' \describe{
+#'   \item{NAME}{Character. Name of the city}
+#'   \item{geometry}{sfc_POINT. Spatial geometry defining city centroids}
+#' }
+#'
+#' @details Centroids are calculated from shapeBigCities using st_centroid().
+#' Includes the same eight major King County cities.
+#'
+#' @source Derived from shapeBigCities using sf::st_centroid()
+#'
+#' @examples
+#' # Plot city boundaries with centroid points
+#' library(ggplot2)
+#' ggplot() +
+#'   geom_sf(data = shapeBigCities) +
+#'   geom_sf(data = centroidsBigCities, color = "red")
+#'
+#' @name centroidsBigCities
+#' @usage data(centroidsBigCities)
+#' @keywords datasets
+"centroidsBigCities"
+
+# foreignbornDT ----
+#' Foreign Born Population by PUMA
+#'
+#' A dataset containing the proportion of foreign-born residents by Public Use
+#' Microdata Area (PUMA) in King County, based on 2022 American Community Survey
+#' PUMS data.
+#'
+#' @format A data.table with foreign-born population estimates:
+#' \describe{
+#'   \item{year}{Numeric. Year of the estimate (2022)}
+#'   \item{PUMACE20}{Numeric. PUMA identifier code}
+#'   \item{variable}{Character. Always "Foreign Born"}
+#'   \item{mean}{Numeric. Proportion of foreign-born residents}
+#' }
+#'
+#' @details Dataset created using rads::calc() on ACS PUMS data.
+#' Includes all King County PUMAs (codes 23301-23318).
+#'
+#' @source 2022 American Community Survey Public Use Microdata Sample (PUMS)
+#'
+#' @examples
+#' # Calculate average foreign-born proportion
+#' mean(foreignbornDT$mean)
+#'
+#' @name foreignbornDT
+#' @usage data(foreignbornDT)
+#' @keywords datasets
+"foreignbornDT"
+
 # icecreamDT ----
 #' Synthetic Income by Ice Cream Flavor Preferences Dataset
 #'
@@ -153,6 +211,96 @@
 #' @usage data(lifespanDT_raw)
 #' @keywords datasets
 "lifespanDT_raw"
+
+# shapeBigCities ----
+#' King County Major Cities Shapefile
+#'
+#' A spatial dataset containing boundary polygons for major cities in King County.
+#' The data is derived from 2020 Census shapefiles.
+#'
+#' @format An sf (simple features) object containing city boundaries:
+#' \describe{
+#'   \item{NAME}{Character. Name of the city}
+#'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry defining city boundaries}
+#' }
+#'
+#' @details The dataset includes boundaries for eight major King County cities:
+#' * Auburn
+#' * Bellevue
+#' * Federal Way
+#' * Kent
+#' * Kirkland
+#' * Redmond
+#' * Renton
+#' * Seattle
+#'
+#' @source Census 2020 shapefiles, accessed from APDE-CDIP/Shapefiles
+#'
+#' @examples
+#' # Basic plot of city boundaries
+#' library(ggplot2)
+#' ggplot(shapeBigCities) +
+#'   geom_sf()
+#'
+#' @name shapeBigCities
+#' @usage data(shapeBigCities)
+#' @keywords datasets
+"shapeBigCities"
+
+# shapeHRA20 ----
+#' King County Health Reporting Areas (2020)
+#'
+#' A spatial dataset containing boundary polygons for Health Reporting Areas (HRAs)
+#' in King County, using 2020 vintage boundaries.
+#'
+#' @format An sf (simple features) object containing HRA boundaries:
+#' \describe{
+#'   \item{HRA20}{Character. HRA name}
+#'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry defining HRA boundaries}
+#' }
+#'
+#' @details Contains boundaries for all King County Health Reporting Areas,
+#' excluding water bodies.
+#'
+#' @source APDE-CDIP/Shapefiles/HRA/hra_2020_nowater.shp
+#'
+#' @examples
+#' # Basic plot of HRA boundaries
+#' library(ggplot2)
+#' ggplot(shapeHRA20) +
+#'   geom_sf()
+#'
+#' @name shapeHRA20
+#' @usage data(shapeHRA20)
+#' @keywords datasets
+"shapeHRA20"
+
+# shapePUMA20 ----
+#' King County PUMAs (2020)
+#'
+#' A spatial dataset containing boundary polygons for Public Use Microdata Areas
+#' (PUMAs) in King County, using 2020 Census definitions.
+#'
+#' @format An sf (simple features) object containing PUMA boundaries:
+#' \describe{
+#'   \item{PUMACE20}{Numeric. PUMA identifier code (23301-23318)}
+#'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry defining PUMA boundaries}
+#' }
+#'
+#' @details Contains boundaries for all King County PUMAs (codes 23301-23318).
+#'
+#' @source Census 2020 shapefiles, accessed from APDE-CDIP/Shapefiles
+#'
+#' @examples
+#' # Basic plot of PUMA boundaries
+#' library(ggplot2)
+#' ggplot(shapePUMA20) +
+#'   geom_sf()
+#'
+#' @name shapePUMA20
+#' @usage data(shapePUMA20)
+#' @keywords datasets
+"shapePUMA20"
 
 # wisdomDT ----
 #' Synthetic Wisdom Score Dataset

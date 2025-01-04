@@ -243,4 +243,4 @@ ggsave('ancient_cities_horizontal.jpg',
        dpi = 600)
 ```
 
-– *Updated by dcolombara, 2025-01-02*
+– *Updated by dcolombara, 2025-01-03*

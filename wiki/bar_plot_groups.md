@@ -162,4 +162,4 @@ ggsave(filename = 'income_by_ice_cream_preference.jpg', # filename with extensio
        dpi = 600)                                       # resolution in dots per inch
 ```
 
-– *Updated by dcolombara, 2025-01-02*
+– *Updated by dcolombara, 2025-01-03*

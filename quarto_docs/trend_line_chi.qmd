@@ -26,7 +26,6 @@ library(apde.graphs)
 
 The breastfedDT dataset is a semi-synthetic dataset included in the apde.graphs package for demonstration purposes.
 
-
 ```{r import_data}
 dt <- apde.graphs::breastfedDT
 dt <- dt[tab == 'trends' & cat1 == 'Race/ethnicity']
@@ -93,7 +92,6 @@ myplot <- myplot +
 #| warning: false
 myplot
 ```
-
 
 ## Add confidence intervals
 
