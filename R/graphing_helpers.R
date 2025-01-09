@@ -51,6 +51,78 @@ apde_caption <- function(data_source = "XYZ dataset",
   labs(caption = caption)
 }
 
+# apde_quantile_breaks() ----
+#' Generate Evenly Spaced Breaks Using Data Quantiles
+#'
+#' @description
+#' `apde_quantile_breaks()` creates a sequence of integer breaks based on the quantiles
+#' of the input data. The function is useful for both axis breaks and
+#' legend breaks in ggplot2 visualizations.
+#'
+#' @param data Numeric vector of values from which to calculate breaks
+#' @param n Integer specifying the desired number of breaks (default = 5)
+#'
+#' @details
+#' The function calculates breaks by computing quantiles of the actual data
+#' distribution, rather than creating evenly spaced breaks between the minimum
+#' and maximum values. This approach ensures the breaks reflect where
+#' your data actually clusters, making visualizations more informative.
+#'
+#' @source Inspired by `legend_breaker()`  by Ron Buie
+#'
+#' @return
+#' A numeric vector of integer break points based on data quantiles
+#'
+#' @examples
+#' # Example 1: Comparing quantile-based breaks vs. evenly spaced breaks
+#' # Create a right-skewed distribution
+#' set.seed(123)
+#' skewed_data <- c(rnorm(80, mean = 10, sd = 2),  # Most data clusters here
+#'                  rnorm(20, mean = 50, sd = 5))   # Some outliers here
+#'                  
+#' # Compare the different approaches
+#' even_breaks <- seq(min(skewed_data), max(skewed_data), length.out = 5)
+#' quantile_breaks <- apde_quantile_breaks(skewed_data, n = 5)
+#' 
+#' print(paste("Even breaks place many breaks in sparse regions:", 
+#'              paste(round(even_breaks), collapse = ', ')))
+#' print(paste("Quantile breaks concentrate where the data clusters:", 
+#'              paste(round(quantile_breaks), collapse = ', ')))
+#'
+#' # Example 2: Basic usage with ggplot2
+#' library(ggplot2)
+#' 
+#' ggplot(lifespanDT_raw, aes(x = city, y = lifespan)) +
+#'   geom_point(aes(color = lifespan), alpha = 0.5) +
+#'   scale_color_viridis_c(
+#'     breaks = apde_quantile_breaks(lifespanDT_raw$lifespan)
+#'   ) +
+#'   labs(title = "Distribution of Lifespans by City",
+#'        color = "Age (years)")
+#'
+#' @seealso 
+#' \code{\link{apde_theme}} for the default APDE `ggplot2` theme
+#' 
+#' @importFrom stats quantile
+#' @export
+apde_quantile_breaks <- function(data, n = 5) {
+  # Input validation
+  if (!is.numeric(data)) {
+    stop("`data` must be a numeric vector")
+  }
+  if (!is.numeric(n) || n < 2) {
+    stop("`n` must be a numeric value >= 2")
+  }
+  
+  # Calculate n evenly spaced probabilities from 0 to 1
+  probs <- seq(0, 1, length.out = n)
+  
+  # Calculate quantiles and convert to integers
+  # We use type = 7 for consistency with R's default quantile type
+  breaks <- quantile(data, probs = probs, type = 7)
+  return(as.integer(breaks))
+}
+
 # apde_rotate_xlab() ----
 #' Rotate x-axis labels for better readability
 #'
