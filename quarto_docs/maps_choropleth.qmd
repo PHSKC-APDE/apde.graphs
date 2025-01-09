@@ -66,25 +66,6 @@ mymap <- ggplot(data = pumas) +
 mymap
 ```
 
-## Format legend as percentages
-
-Convert the legend values to percentages and adjust breaks for readability.
-
-```{r format_legend}
-mymap <- mymap +
-  scale_fill_continuous(labels = scales::percent_format(accuracy = 1),
-                       breaks = seq(0, 1, by = 0.1))
-```
-
-```{r display_with_formatted_legend}
-#| fig-width: 11 
-#| fig-height: 8.5
-#| dpi: 150
-#| echo: false
-#| warning: false
-mymap
-```
-
 ## Add APDE's diverging color scheme
 
 While not appropriate for this neutral indicator, here is the [Tableau Style Guide's](https://kc1.sharepoint.com/:w:/r/teams/DPH-TableauResources/_layouts/15/Doc.aspx?sourcedoc=%7B359811A5-92B0-4B13-B6DC-DD71CDBBA11B%7D&file=Tableau%20Style%20Guide%20v1.0.4.docx&action=default&mobileredirect=true) recommended diverging color scheme for reference.
@@ -94,7 +75,9 @@ While not appropriate for this neutral indicator, here is the [Tableau Style Gui
 mymap_diverging <- mymap +
   scale_fill_gradientn(
     colors = c("#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf",
-               "#e0f3f8", "#abd9e9", "#74add1", "#4575b4")
+               "#e0f3f8", "#abd9e9", "#74add1", "#4575b4"), 
+    labels = scales::percent_format(accuracy = 1),  # converts legend to percentages
+    breaks = seq(0, 1, by = 0.1)                    # legend increments are 10%
   )
 ```
 
@@ -116,7 +99,9 @@ Since foreign-born population is a neutral indicator, we use the [Tableau Style 
 mymap <- mymap +
   scale_fill_gradientn(
     colors = c("#f7fcfd", "#e0ecf4", "#bfd3e6", "#9ebcda", "#8c96c6",
-               "#8c6bb1", "#88419d", "#810f7c", "#4d004b")
+               "#8c6bb1", "#88419d", "#810f7c", "#4d004b"),
+    labels = scales::percent_format(accuracy = 1),  # converts legend to percentages
+    breaks = seq(0, 1, by = 0.1)                    # legend increments are 10%
   )
 ```
 
@@ -176,9 +161,9 @@ Remove grid lines and adjust margins for a cleaner map display.
 ```{r adjust_theme}
 mymap <- mymap +
   theme(
-    panel.grid = element_blank(),
-    axis.text = element_blank()
-  )
+    panel.grid = element_blank(),  # eliminate grid
+    axis.text = element_blank()    # eliminate longitude / latitude labels
+  ) 
 ```
 
 ```{r display_adjusted_theme}
@@ -207,7 +192,7 @@ mymap <- mymap +
                 color = "#333333",                    # font color
                 fill = "white",                       # background color
                 alpha = 0.7,                          # transparency for the background
-                label.padding = unit(0.15, "lines"))  # Padding around text
+                label.padding = unit(0.15, "lines"))  # padding around text
 ```
 
 ```{r display_with_cities}
