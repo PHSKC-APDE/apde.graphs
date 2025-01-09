@@ -25,53 +25,108 @@ For detailed examples and usage guides, visit our [Wiki](https://github.com/PHSK
 ### Quick Reference Gallery
 Click on any visualization to see its implementation details:
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0;">
+<table>
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_chi">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_chi_files/figure-commonmark/display_custom_colors-1.png" alt="CHI Style Bar Graphs" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_chi_files/figure-commonmark/display_custom_colors-1.png" width="300" alt="CHI Style Bar Graphs"/>
     </a>
+</td>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_groups">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_groups_files/figure-commonmark/display_hline-1.png" alt="Bar Plot by groups" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_groups_files/figure-commonmark/display_hline-1.png" width="300" alt="Bar Plot by groups"/>
     </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_single">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_single_files/figure-commonmark/display_horizontal2-1.png" alt="Bar Plot hoizontal" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bar_plot_single_files/figure-commonmark/display_horizontal2-1.png" width="300" alt="Bar Plot horizontal"/>
     </a>
+</td>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/boxplots_by_group">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/boxplots_by_group_files/figure-commonmark/display_theme_tweak-1.png" alt="Box Plots" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/boxplots_by_group_files/figure-commonmark/display_theme_tweak-1.png" width="300" alt="Box Plots"/>
     </a>
-        <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots_files/figure-commonmark/display_customize_facet_wrap-1.png" alt="facet_wrap" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
-    </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots_files/figure-commonmark/display_customized_face_grid2-1.png" alt="facet_grid" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots_files/figure-commonmark/display_customize_facet_wrap-1.png" width="300" alt="facet_wrap"/>
+    </a>
+</td>
+<td width="50%">
+    <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots">
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/faceted_plots_files/figure-commonmark/display_customized_face_grid2-1.png" width="300" alt="facet_grid"/>
+    </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot_files/figure-commonmark/display_with_reference-1.png" alt="Forest Plot" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot_files/figure-commonmark/display_with_reference-1.png" width="300" alt="Forest Plot"/>
     </a>
-        <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot_files/figure-commonmark/display_modern-1.png" alt="Forest Plot" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+</td>
+<td width="50%">
+    <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot">
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/forest_plot_files/figure-commonmark/display_modern-1.png" width="300" alt="Forest Plot"/>
     </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/histogram">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/histogram_files/figure-commonmark/display_with_annotation-1.png" alt="Histogram" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/histogram_files/figure-commonmark/display_with_annotation-1.png" width="300" alt="Histogram"/>
     </a>
+</td>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_choropleth">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_choropleth_files/figure-commonmark/display_with_cities-1.png" alt="Choropleth Map" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_choropleth_files/figure-commonmark/display_with_cities-1.png" width="300" alt="Choropleth Map"/>
     </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_density">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_density_files/figure-commonmark/display_adjusted_theme-1.png" alt="Density Map" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_density_files/figure-commonmark/display_adjusted_theme-1.png" width="300" alt="Density Map"/>
     </a>
+</td>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_points">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_points_files/figure-commonmark/display_with_labels-1.png" alt="Point Map" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/maps_points_files/figure-commonmark/display_with_labels-1.png" width="300" alt="Point Map"/>
     </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot_files/figure-commonmark/display_plot-1.png" alt="Scatter Plot" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot_files/figure-commonmark/display_plot-1.png" width="300" alt="Scatter Plot"/>
     </a>
+</td>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot_files/figure-commonmark/display_with_custom_legends-1.png" alt="Best Fit Curve" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/scatter_plot_files/figure-commonmark/display_with_custom_legends-1.png" width="300" alt="Best Fit Curve"/>
     </a>
+</td>
+</tr>
+
+<tr>
+<td width="50%">
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/trend_line_chi">
-        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/trend_line_chi_files/figure-commonmark/display_tweak_default_theme-1.png" alt="CHI Style Trend Line" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" />
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/trend_line_chi_files/figure-commonmark/display_tweak_default_theme-1.png" width="300" alt="CHI Style Trend Line"/>
     </a>
-    
-</div>
+<td width="50%">
+</td>
+</tr>
+</table>
+
 
 ## Problems or Suggestions?
 
