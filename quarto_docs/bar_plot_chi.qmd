@@ -1,0 +1,326 @@
+---
+title: "CHI Style Demographic Bar Plots with Confidence Intervals"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a [CHI](https://kingcounty.gov/chi) style demographics plot with `ggplot2`. While you would typically write all components in a single code block using + to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+## Load libraries
+
+The apde.graphs package contains custom functions and themes specific to APDE visualizations.
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(data.table)
+library(apde.graphs)
+library(RColorBrewer)  # Provides color-blind friendly palettes
+```
+
+## Import & preview data
+
+The breastfedDT dataset is a synthetic dataset included in the apde.graphs package for demonstration purposes.
+
+```{r import_data}
+dt <- apde.graphs::breastfedDT
+dt <- dt[tab == 'demgroups']
+head(dt)
+```
+
+## Prepare custom labels
+
+Format percentages and add significance and caution markers.
+
+```{r prepare_data}
+dt[, label := sprintf("%.0f%%", result * 100)]
+dt[!is.na(significance), label := paste0(label, significance)]
+dt[!is.na(caution), label := paste0(label, caution)]
+```
+
+## Create initial vertical plot
+
+Start with a basic vertical bar plot before flipping coordinates.
+
+```{r initial_plot}
+myplot <- ggplot(dt,
+               aes(x = cat1_group,
+                   y = result,
+                   fill = cat1)) +
+  geom_bar(stat = "identity")
+```
+
+```{r display_initial}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add data labels
+
+Position labels in the center of each bar using position_stack().
+
+```{r add_labels}
+myplot <- myplot +
+  geom_text(aes(label = label),
+            hjust = 0.5,
+            position = position_stack(0.5))
+```
+
+```{r display_with_labels}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Flip coordinates
+
+Convert to horizontal orientation for better readability of category labels.
+
+```{r flip_coords}
+myplot <- myplot +
+  coord_flip()
+```
+
+```{r display_flipped}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Format x-axis as percentages
+
+The expansion parameter adds extra space on the right for labels to prevent crowding.
+
+```{r add_spacing}
+myplot <- myplot +
+  scale_y_continuous(labels = scales::percent)
+```
+
+```{r display_with_spacing}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add confidence intervals
+
+Add error bars with points at the bounds for better visibility. Typically we would use `geom_errorbar()`, but the [CHI](https://kingcounty.gov/chi) standard has dots at the ends of the lines rather than 'whiskers'.
+
+```{r add_ci}
+myplot <- myplot +
+  geom_point(aes(y = lower_bound), shape = 16, size = 1, show.legend = FALSE) +
+  geom_point(aes(y = upper_bound), shape = 16, size = 1, show.legend = FALSE) +
+  geom_segment(aes(y = lower_bound, yend = upper_bound,
+                  x = cat1_group, xend = cat1_group))
+```
+
+```{r display_with_ci}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add suppression markers
+
+Placement of suppression markers at 1% is arbitrary and was chosen to make it readily visible.
+
+```{r add_suppression}
+myplot <- myplot +
+  # Add suppression markers with offset
+  geom_text(data = dt[!is.na(suppression)],
+            aes(y = 0.01, label = suppression),  # Offset to 1% of scale
+            hjust = 0)
+```
+
+```{r display_with_suppression}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add facet labels for categories
+
+Use `facet_grid` to create separate sections for each main category.
+
+```{r add_strips}
+myplot <- myplot +
+  facet_grid(cat1 ~ .,          # split rows by cat1
+             scales = "free_y", # each facet can have different y-axis scale
+             space = "free_y",  # facet heights proportional to number of groups
+             switch = "y")      # move facet labels to left side of graph
+```
+
+```{r display_with_strips}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Set title, axes, and legend labels
+
+```{r title_legend_axes}
+#| echo: true
+#| output: false
+myplot <- myplot +
+  labs(title = "Breastfeeding initiation (average: 2018-2022)",
+       x = "",           # no x-axis title
+       y = "",           # no y-axis title
+       fill = 'Category' # legend title
+  ) 
+```
+
+```{r display_title_legend_axes}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r default_theme}
+#| echo: true
+#| output: false
+myplot <- myplot +
+  apde_theme() +
+  apde_caption(data_source = 'Synthetic dataset', 
+               additional_text = 
+               c('^ = Data suppressed if too few cases to protect confidentiality and/or report reliable rates\n', 
+                 '* = Significantly different from King County average\n', 
+                 '! = Interpret with caution; sample size is small so estimate is imprecise\n')
+               ) 
+```
+
+```{r display_default_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Tweak default theme
+
+Adjust category text alignment and remove grid lines for cleaner appearance.
+
+```{r tweak_default_theme}
+#| echo: true
+#| output: false
+myplot <- myplot +
+  theme(
+    strip.text.y.left = element_text(angle = 0,       # cat1 text inline with cat1_group 
+                                     hjust = 0.5,     # cat1 centered horizontally 
+                                     vjust = 1),      # cat1 aligned at top of each section / panel
+    panel.grid.major.y = element_blank()              # eliminate horizontal grid lines
+  ) +
+  scale_y_continuous(labels = scales::percent,
+                    expand = expansion(mult = c(0,    # 0% padding to the left of the bars
+                                                0)))  # 0% padding to the right of the bars
+```
+
+```{r display_tweak_default_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## ColorBrewer color-blind safe color scheme
+
+RColorBrewer provides color-blind friendly palettes (among many other palettes).
+
+```{r colorbrewer}
+myplot_cb <- myplot +
+  scale_fill_brewer(palette = "RdYlBu") # a color-blind safe RColorBrewer palette
+```
+
+```{r display_colorbrewer}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_cb
+```
+
+## Custom color scheme
+
+Define specific colors for each category using hex codes or named colors. These are based on APDE's [Tableau Style Guide](https://kc1.sharepoint.com/:w:/r/teams/DPH-TableauResources/_layouts/15/Doc.aspx?sourcedoc=%7B359811A5-92B0-4B13-B6DC-DD71CDBBA11B%7D&file=Tableau%20Style%20Guide%20v1.0.4.docx&action=default&mobileredirect=true)
+
+```{r custom_colors}
+myplot_custom <- myplot +
+  scale_fill_manual(
+    values = c(
+      "King County" = "#79706E",
+      "Age" = "#F16913",
+      "Race" = "#027B8E",
+      "Ethnicity" = "#30BCAD",
+      "Neighborhood poverty" = "#7A0177",
+      "Education" = "#D4A6C8",
+      "Regions" = "#2C7BB6",
+      "Big cities" = "#28A9C5"
+    )
+  )
+```
+
+```{r display_custom_colors}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_custom
+```
+
+## Save the plot
+
+`ggsave` automatically detects file type from filename extension (.jpg, .png, .pdf, etc.).
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+
+ggsave('health_indicators.jpg',
+       myplot_custom,
+       width = 11,
+       height = 8.5,
+       dpi = 600, 
+       units = 'in')
+```

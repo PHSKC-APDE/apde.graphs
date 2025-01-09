@@ -1,0 +1,222 @@
+---
+title: "Point Maps"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a point-based map using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+***Note!*** [`tmap`](https://r-tmap.github.io/tmap/) is sometimes used for static maps, but we demonstrate `ggplot2` for consistency with the other guides in this package. If you are interested in creating dynamic maps, we suggest starting with [`mapview`](https://r-spatial.github.io/mapview/).
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(apde.graphs)
+library(sf)
+```
+
+## Import & preview data
+
+### King County Regions
+
+```{r import_regions}
+regions <- apde.graphs::shapeRegions20
+plot(regions)
+```
+
+### Acute Service (Trauma) Hospitals
+
+```{r import_hospitals}
+hospitals <- apde.graphs::shapeTraumaHospitals
+plot(hospitals)
+```
+
+### Medical Centers
+
+```{r import_medcenters}
+medcenters <- apde.graphs::shapeMedicalCenters
+plot(medcenters)
+```
+
+## Create initial map with default colors
+
+Start with a basic map of regions using default ggplot2 colors.
+
+```{r initial_plot}
+mymap <- ggplot() +
+  geom_sf(data = regions, 
+          aes(fill = Region20),
+          color = '#333333')  # border color is from Tableau Style Guide
+```
+
+```{r display_initial}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Apply Tableau Style Guide colors
+
+Update the map with the region color scheme in the [Tableau Style Guide](https://kc1.sharepoint.com/:w:/r/teams/DPH-TableauResources//_layouts/15/Doc.aspx?sourcedoc=%7B359811A5-92B0-4B13-B6DC-DD71CDBBA11B%7D&file=Tableau%20Style%20Guide%20v1.0.4.docx&action=default&mobileredirect=true).
+
+```{r tableau_colors}
+mymap <- mymap +
+  scale_fill_manual(values = c(
+    "East" = "#28a9c5",
+    "North" = "#f8b620",
+    "South" = "#77559e",
+    "Seattle" = "#d33516"
+  ))
+```
+
+```{r display_tableau_colors}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add healthcare facility symbols
+
+Add hospitals and medical centers using simple geometric shapes for distinction.
+
+```{r add_basic_points}
+mymap <- mymap +
+  geom_sf(data = medcenters,
+          aes(shape = "Medical Center"),
+          size = 2,                                    # overall size
+          color = 'blue') +                            # color of medical center symbol
+  geom_sf(data = hospitals,
+          aes(shape = 'Hospital'),
+          size = 2,                                    # overall size
+          stroke = 3,                                  # width of lines
+          color = 'black') +                           # color of hospital symbol
+  scale_shape_manual(values = c("Hospital" = 3,        # hospital symbol is plus sign
+                                "Medical Center" = 8)) # medical center symbol is asterisk
+```
+
+```{r display_basic_points}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add titles and format legend
+
+```{r add_titles}
+mymap <- mymap +
+  labs(title = "Healthcare Facilities by Region",
+       subtitle = "King County",
+       x = "",                   # no x-axis title
+       y = "",                   # no y-axis title
+       fill = "Region",          # legend title for regions
+       shape = "Facility Type")  # legend title for facilities
+```
+
+```{r display_with_titles}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+#| message: false
+mymap <- mymap +
+  apde_theme() +
+  apde_caption(data_source = "King County GIS Open Data")
+```
+
+```{r display_with_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Tweak default theme
+
+Remove grid lines and adjust margins for a cleaner map display.
+
+```{r adjust_theme}
+mymap <- mymap +
+  theme(
+    panel.grid = element_blank(),
+    axis.text = element_blank()
+  )
+```
+
+```{r display_adjusted_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add hospital labels
+
+Add text labels for hospital names.
+
+```{r add_labels}
+mymap <- mymap +
+  geom_sf_label(data = hospitals,
+                aes(label = NAME), # lavel values
+                size = 3,          # font size
+                fontface = "bold", # font type
+                color = "black",   # font color
+                fill = "white",    # label background color
+                alpha = 0.7,       # tranparency
+                label.padding = unit(0.15, "lines"))
+```
+
+```{r display_with_labels}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Save the plot
+
+`ggsave()` automatically detects file type from filename extension (.jpg, .png, .pdf, etc.).
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+ggsave('healthcare_facilities_map.jpg',
+       mymap,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+```

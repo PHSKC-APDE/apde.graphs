@@ -1,0 +1,318 @@
+---
+title: "Bar Plots with Highlighted Bars"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building bar plots with both ***line-level*** and ***pre-aggregated*** data. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(data.table)
+library(apde.graphs)
+```
+
+## Import & preview synthetic data
+
+### Pre-aggregated data
+
+```{r import_data_method1}
+dt_agg <- apde.graphs::lifespanDT_agg
+head(dt_agg)
+```
+
+### Line-level data
+
+```{r import_data_method2}
+dt_raw <- apde.graphs::lifespanDT_raw
+head(dt_raw)
+```
+
+### Identify the city with the longest life span
+```{r max_city}
+max_city <- dt_raw[, .(mean_lifespan = mean(lifespan)), by = city][which.max(mean_lifespan), city]
+print(max_city)
+```
+
+## Create the base `ggplot2` bar plots
+
+### Pre-aggregated data (use *`stat = 'identity'`*)
+
+```{r base_plot_method1}
+plot_agg <- ggplot(dt_agg, aes(x = city, 
+                               y = mean_lifespan,
+                               fill = city == max_city)) +  # Use logical test to determine fill color
+  
+  # Basic bar plot for pre-calculated means
+  geom_bar(stat = "identity")                               # geom_col() would be equivalent
+```
+
+```{r display_base1}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_agg
+```
+
+### Line-level data (use *`stat = 'summary'`*)
+
+```{r base_plot_method2}
+plot_raw <- ggplot(dt_raw, aes(x = city, 
+                               y = lifespan,
+                               fill = city == max_city)) + # Use logical test to determine fill color
+  
+  # Basic bar plot that calculates means from raw data
+  geom_bar(stat = "summary",                               # stat = "summary" performs calculations by city
+           fun = "mean")                                   # fun = "mean" = mean of all observations by city
+```
+
+```{r display_base2}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+::: {.note-box style="background-color: #f8f9fa; padding: 1em; border-left: 4px solid #1b9e77; margin: 1em 0;"}
+<b>Note!</b><br/>when you have `geom_bar(stat = 'summary', fun = ...)`, `fun =` can take the following built-in options: "mean", "median", "sum", "min", "max", "length", "sd", "var", and "IQR". Custom functions can also be used.
+:::
+
+At this point the two plots are (more or less) the same and the remaining code can be applied to either plot. For simplicity, we have arbitrarily chosen to continue with the `plot_raw` object.
+
+## Define scales (axes and colors)
+
+```{r add_scales}
+plot_raw <- plot_raw + 
+    scale_fill_manual(values = c('TRUE' = '#7570B3',     # color for highest value
+                                'FALSE' = '#1B9E77')) +  # color for other values
+    
+    # Customize y-axis
+    scale_y_continuous(
+      breaks = seq(0, 60, by = 10),                     # show tick marks every 10 units
+      labels = seq(0, 60, by = 10)                      # show tick labels every 10 units
+    )
+```
+
+```{r display_with_scales}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+## Add labels
+
+```{r add_labels}
+plot_raw <- plot_raw +
+    labs(
+      title = 'Mean Lifespan in Ancient Cities',
+      subtitle = 'Illustration of a Simple Bar Graph',
+      x = 'City',
+      y = 'Mean Lifespan (years)', 
+      fill = 'Max Life Span'  # legend title
+    )
+```
+
+```{r display_with_labels}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+## Add APDE customizations
+
+The `apde_caption()`, `apde_theme()`, and `apde_rotate_xlab()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+#| echo: true
+#| output: false
+plot_raw <- plot_raw +
+    apde_caption(data_source = 'Synthetic dataset') +
+    apde_theme() +
+    apde_rotate_xlab() # pivots x-axis labels by 45 degrees to reduce crowding
+```
+
+```{r display_with_theme}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+## Tweak theme
+Drop legend since it is not useful in this graph.
+
+```{r tweak_theme}
+plot_raw <- plot_raw + 
+  theme(legend.position = 'none')
+```
+
+```{r display_with_tweaked_theme}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+## Add horizontal reference line
+
+```{r add_ref_line}
+plot_raw <- plot_raw +
+    geom_hline(yintercept = mean(dt_raw$lifespan), # line at overall mean lifespan 
+               linetype = 'dashed',                # options: solid, dashed, dotdash, longdash, twodash
+               linewidth = 1,                      # line thickness
+               color = 'red')                      # line color
+```
+
+```{r display_with_ref_line}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_raw
+```
+
+## Add annotations
+
+```{r add_annotations}
+plot_annotated <- plot_raw +
+  
+    # Add text annotation
+    annotate(
+      geom = 'text',
+      label = 'Overall mean lifespan',
+      size = 4,        # font size
+      x = 4,           # when categorical, each category = 1 increment 
+      y = 50,     
+      hjust = 0,       # horizontal justification
+      vjust = 0        # vertical justification
+    ) +
+    
+    # Add arrow
+    annotate(
+      geom = "segment",
+      x = 5, xend = 5,
+      y = 49.5, yend = 47,
+      arrow = arrow(length = unit(0.2, "cm"))
+    ) +
+    
+    # Add highlighted rectangle
+    annotate(
+      geom = 'rect',
+      xmin = 3.9, xmax = 6,
+      ymin = 49.7, ymax = 52,
+      alpha = 0.2,     # transparency (0 == most, 1 == least)
+      fill = 'green',  # color of rectangle
+      col = NA         # color of outline, NA == no outline
+    )
+```
+
+```{r display_annotated}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_annotated
+```
+
+## Rotate horzontally
+
+```{r create_horizontal}
+plot_horizontal <- plot_raw + 
+  coord_flip() +               # rotates the entire plot
+  apde_rotate_xlab(angle = 0,  # rotated x axis labels not needed for horizontal version
+                  hjust = 0.5) # horizontal justification
+```
+
+```{r display_horizontal}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_horizontal
+```
+
+Notice that the y-axis is now in reverse alphabetical order. To reverse this order, you will have to reverse the order of the `city` factor variable.
+
+```{r create_horizontal2}
+# Create the order we want
+city_order <- sort(unique(plot_raw$data$city), decreasing = TRUE)
+
+# Plot
+plot_horizontal <- plot_raw + 
+  scale_x_discrete(limits = city_order) +
+  coord_flip() +                 # rotates the entire plot
+  apde_rotate_xlab(angle = 0,    # rotated x axis labels not needed for horizontal version
+                  hjust = 0.5)   # horizontal justification
+```
+
+```{r display_horizontal2}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+plot_horizontal
+```
+
+## Save the plots
+
+`ggsave` automatically detects file type from filename extension (.jpg, .png, .pdf, etc.)
+
+```{r save_plots}
+#| echo: true
+#| output: false
+#| eval: false
+
+# Save the annotated vertical version
+ggsave('ancient_cities_annotated.jpg',    
+       plot_annotated,                   
+       width = 10,                           
+       height = 6,                           
+       dpi = 600)                            
+
+# Save the horizontal versions
+ggsave('ancient_cities_horizontal.jpg', 
+       plot_horizontal, 
+       width = 10, 
+       height = 6, 
+       dpi = 600)
+```
+
+-- *`r paste0("Updated by ", Sys.getenv("USERNAME"), ", ", Sys.Date())`*

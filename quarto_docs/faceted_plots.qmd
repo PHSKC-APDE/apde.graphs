@@ -1,0 +1,239 @@
+---
+title: "Faceted Plots"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to creating faceted plots using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+`facet_wrap()` and `facet_grid()` serve different needs:
+
+-   `facet_wrap()`: Creates a one-dimensional sequence of panels that "wraps" around based on your specified number of rows or columns. Best when you have a single grouping variable.
+-   `facet_grid()`: Creates a two-dimensional grid of panels based on two grouping variables. Best when you want to compare across two categorical variables simultaneously.
+
+Though the examples below use a histograms, these functions can be used with any kind of `ggplot2` graphic.
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(data.table)
+library(apde.graphs)
+```
+
+## Import & preview data
+
+```{r import_data}
+dt <- apde.graphs::lifespanDT_raw
+head(dt)
+```
+
+## Create base histogram
+
+First, we'll create a histogram that we'll later facet by city.
+
+```{r base_hist}
+#| message: false
+myplot <- ggplot(dt, aes(x = lifespan)) +
+  geom_histogram(bins = 30,                           # number of bins
+                fill = "#1B9E77",                     # color of bins
+                color = "white",                      # border color of bins
+                alpha = 0.8) +                        # transparency of bins
+  scale_x_continuous(breaks = seq(0, 100, by = 10)) + # set breaks / labels every 10 years
+    labs(title = "Distribution of Lifespans in Ancient Cities",
+       x = "Age (years)",
+       y = "Count") +
+  apde_theme()
+```
+
+```{r display_base}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Use `facet_wrap()`
+
+Use `facet_wrap()` to create separate histograms for one dimension: cities.
+
+```{r add_facet_wrap}
+myplot_wrap <- myplot +
+  facet_wrap(~city,      # formula specifying grouping variable
+             nrow = 2)   # number of rows (could use ncol instead)
+```
+
+```{r display_wrap}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_wrap
+```
+
+## Customize `facet_wrap()` appearance
+
+We will move each city's name below its histogram and display an x-axis for each individual histogram.
+
+```{r customize_facet_wrap}
+#| message: false
+myplot_wrap <- myplot_wrap +
+  facet_wrap(~city,
+             nrow = 2,                                # number of rows (could use ncol instead)
+             strip.position = 'bottom',               # move city names below each histogram 
+             scales = "free_x") +                     # allow each histogram to have its own x-axis
+  
+  scale_x_continuous(limits = c(25, 75),              # force each x-axis to have the same range
+                     breaks = seq(30, 70, by = 10)) + # force each x-axis to have the same breaks
+  
+  apde_caption(data_source = "Synthetic dataset")
+```
+
+```{r display_customize_facet_wrap}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_wrap
+```
+
+## Use `facet_grid()`
+
+Use `facet_grid()` to arrange histograms in a two-dimensional layout based on cities and sex.
+
+```{r add_sex}
+#| message: false
+# Create faceted plot with facet_grid
+myplot_grid <- myplot + 
+  apde_theme() +
+  facet_grid(sex ~ city)  # rows ~ columns
+```
+
+```{r display_add_sex}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_grid
+```
+
+## Customize `facet_grid` appearance
+
+We will add a subtitle, move the y labels to the left hand side, rotate the y labels, and make the x-axis tick labels more legible.
+
+```{r customize_facet_grid}
+#| message: false
+myplot_grid <- myplot +
+    labs(title = "Distribution of Lifespans in Ancient Cities", 
+       subtitle = "By Sex and City", 
+       x = "Age (years)",
+       y = "Count") +
+  
+  facet_grid(sex ~ city,
+             switch = "y",                             # move y-axis labels to left side
+             scales = "fixed") +                       # standardize both axes for all histograms
+  
+    scale_x_continuous(limits = c(25, 75),             # force each x-axis to have the same range
+                     breaks = seq(30, 60, by = 10)) +  # force each x-axis to have the same breaks
+  
+  theme(strip.text.y.left = element_text(angle = 0,    # rotate sex values 
+                                     hjust = 0.5,      # center sext values horizontally 
+                                     vjust = 0.5)) +   # center sex values vertically
+  
+  apde_caption(data_source = "Synthetic dataset")
+```
+
+```{r display_customized_face_grid}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_grid
+```
+
+## *Super* Customized `facet_grid` appearance
+
+Rebuild the facet_gridded plot from the ground up, but use a different color for each sex. 
+
+::: {.note-box style="background-color: #f8f9fa; padding: 1em; border-left: 4px solid #1b9e77; margin: 1em 0;"}
+<b>Why do we need to rebuild the graph from scratch?</b><br/>While ggplot2 excels at building complex visualizations layer by layer, there are instances where the foundational structure of your plot needs to be adjusted. This might be the case when you need to incorporate a new aesthetic, like `fill = sex` below, which changes the underlying data mapping and appearance. In these situations, starting with a fresh plot ensures that the changes are properly integrated and the plot develops you envisioned it.
+:::
+
+```{r customize_facet_grid2}
+#| message: false
+myplot_grid2 <- ggplot(dt, aes(x = lifespan, 
+                               fill = sex)) +            # colors will differ by sex
+  
+  geom_histogram(bins = 30,                              # rebuild the histogram
+                 color = "white",                        # color of border
+                 alpha = 0.8,                            # transparency of bars
+                 show.legend = FALSE) +                  # hide legend, could also use guides(fill = "none")
+  
+  scale_fill_manual(values = c("Female" = "#7570B3",     # select color for Female
+                               "Male" = "#1B9E77")) +    # select color for Male
+  
+  labs(title = "Distribution of Lifespans in Ancient Cities", 
+       subtitle = "By Sex and City", 
+       x = "Age (years)",
+       y = "Count") +
+  
+  facet_grid(sex ~ city,
+             switch = "y",                               # move y-axis labels to left side
+             scales = "fixed") +                         # standardize both axes for all histograms
+  
+  scale_x_continuous(limits = c(25, 75),                 # force each x-axis to have the same range
+                     breaks = seq(30, 60, by = 10)) +    # force each x-axis to have the same breaks
+  
+  theme(strip.text.y.left = element_text(angle = 0,      # rotate sex values 
+                                         hjust = 0.5,    # center sext values horizontally 
+                                         vjust = 0.5)) + # center sex values vertically
+  
+  apde_theme() + 
+  apde_caption(data_source = "Synthetic dataset")
+```
+
+```{r display_customized_face_grid2}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_grid2
+```
+
+
+## Save the plots
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+
+ggsave('faceted_lifespans_wrap.jpg',
+       myplot_wrap,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+
+ggsave('faceted_lifespans_grid.jpg',
+       myplot_grid,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+```

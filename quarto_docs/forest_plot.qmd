@@ -1,0 +1,321 @@
+---
+title: "Forest Plots (Point Estimates with Error Bars)"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a forest plot (i.e., point estimates with error bars) using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(data.table)
+library(apde.graphs)
+```
+
+## Import & preview data
+
+```{r import_data}
+# Get breastfeeding initiation data
+dt <- apde.graphs::breastfedDT
+
+# Get breastfeeding initiation for King County as a whole
+kc_avg <- dt[tab == 'demgroups' & cat1_group == 'King County', result]
+
+# Get breastfeeding initiation by education level
+dt <- dt[tab == 'demgroups' & cat1 == 'Education'] 
+
+# Modify significance column because NA values will make ggplot2 grumpy
+dt[, significance := fifelse(is.na(significance), 
+                             'Not significantly different', 
+                             'Significantly different')]
+
+head(dt)
+```
+
+## Create initial point plot
+
+Start with basic points showing the estimate for each education level.
+
+```{r initial_plot}
+myplot <- ggplot(dt, 
+                 aes(x = result,
+                     y = cat1_group)) +
+  geom_point(size = 3)
+```
+
+```{r display_initial}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add color to the aesthetic
+
+Add color the aesthetic at the start so we won't have to back track later.
+
+```{r initial_colored}
+myplot <- ggplot(dt, 
+                 aes(x = result,
+                     y = cat1_group, 
+                     color = significance)) +  # color will differ by significance
+  geom_point(size = 3)
+```
+
+```{r display_initial_colored}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add error bars
+
+Add error bars showing the 95% confidence intervals.
+
+```{r add_errorbars}
+myplot <- myplot +
+  geom_errorbarh(aes(xmin = lower_bound,  # horizontal error bar
+                    xmax = upper_bound),
+                height = 0.2)             # height of error bar end caps
+```
+
+```{r display_with_errorbars}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Format axes
+
+Format x-axis as percentage and set limits.
+
+```{r format_axes}
+myplot <- myplot +
+  scale_x_continuous(labels = scales::percent,   # display decimals as percentages
+                    limits = c(0.9, 1),          # limit to 90-100% 
+                    breaks = seq(0.9, 1, 0.025)) # 2.5 percentage point breaks
+```
+
+```{r display_with_axes}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Specify colors
+
+Specify custom colors based on statistical significance.
+
+```{r add_colors}
+myplot <- myplot +
+  scale_color_manual(
+        values = c("Significantly different" = "#1B9E77", 
+                   "Not significantly different" = "#7570B3"),
+                    name = "Compared to King County average")  # legend title
+```
+
+```{r display_with_colors}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add titles
+
+```{r add_titles}
+myplot <- myplot +
+  labs(title = "Breastfeeding Initiation by Education Level",
+       subtitle = "King County, 2018-2022",
+       x = "",           # no x-axis title needed
+       y = "")           # no y-axis title needed
+```
+
+```{r display_with_titles}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+#| message: false
+myplot <- myplot +
+  apde_theme() +
+  apde_caption(data_source = "Synthetic dataset")
+```
+
+```{r display_with_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Tweak default theme
+
+Remove grid lines.
+
+```{r adjust_theme}
+myplot <- myplot +
+  theme(panel.grid.major.y = element_blank()) # eliminate horizontal grid lines
+```
+
+```{r display_adjusted_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Annotations for King County average
+
+Add a vertical line and text to note the King County average.
+
+```{r add_reference}
+myplot <- myplot +
+  geom_vline(xintercept = kc_avg,   # vline for vertical & hline for horizontal
+             linetype = "dashed",   # options: twodash, solid, longdash, dotted, dotdash, dashed, blank
+             color = "grey") +      # line color
+  annotate(geom = 'text',
+    label = "King County average",
+    x = 0.958,                     # centered at 95.8%
+    y = 8,                         # center on the 8th categorical from the bottom
+    color = 'grey',                # font color
+    angle = 90,                    # font rotation
+    hjust = 1)                     # horizontal justification
+```
+
+```{r display_with_reference}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## An alternative more modern style
+
+Create a more modern graphic using squares instead of dots and thicker error bars.
+
+```{r modern_style}
+#| message: false
+modern_plot <- ggplot(dt, 
+                     aes(x = result,
+                         y = cat1_group, 
+                         color = significance)) +                # color will differ by significance
+  
+  # Add thick error bars with transparency
+  geom_errorbarh(aes(xmin = lower_bound,                         # horizontal error bar
+                     xmax = upper_bound),
+                 height = 0,                                     # no vertical ends
+                 linewidth = 3,                                  # very thick lines
+                 alpha = 0.6) +                                  # transparency
+  
+  # Add squares on top of error bars
+  geom_point(size = 3,                                           # larger points
+             shape = 15,                                         # square shape
+             alpha = 1) +                                        # fully opaque
+  
+  # Add other plot elements
+  scale_x_continuous(labels = scales::percent,                   # display decimals as percentages
+                    limits = c(0.9, 1),                          # limit to 90-100% 
+                    breaks = seq(0.9, 1, 0.025)) +               # 2.5 percentage point breaks
+  
+  scale_color_manual(
+            values = c("Significantly different" = "#1B9E77", 
+                   "Not significantly different" = "#7570B3"),
+                    name = "Compared to King County average") +  # legend title
+  
+  geom_vline(xintercept = kc_avg,                                # vertical line
+             linetype = "dashed",                                # options: twodash, solid, longdash, dotted, etc.
+             color = "grey",                                     # line color
+             linewidth = 0.8) +                                  # slightly thicker reference line
+  
+  annotate(geom = 'text',
+           label = "King County average",
+           x = 0.958,                                            # centered at 95.8%
+           y = 8,                                                # center on the 8th categorical from the bottom
+           color = 'grey',                                       # font color
+           angle = 90,                                           # font rotation
+           hjust = 1) +                                          # horizontal justification
+  
+  labs(title = "Breastfeeding Initiation by Education Level",
+       subtitle = "King County, 2018-2022",
+       x = "",                                                   # no x-axis labels
+       y = "") +                                                 # no y-axis labels
+  
+  apde_theme() +
+  apde_caption(data_source = "Synthetic dataset") +
+  
+  theme(panel.grid.major.y = element_blank() )                   # eliminate horizontal grid lines
+```
+
+```{r display_modern}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+modern_plot
+```
+
+## Save the plot
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+
+# Save traditional version
+ggsave('breastfeeding_by_education.jpg',
+       myplot,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+
+# Save modern version
+ggsave('breastfeeding_by_education_modern.jpg',
+       modern_plot,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+```
+
+-- *`r paste0("Created by ", Sys.getenv("USERNAME"), ", ", Sys.Date())`*

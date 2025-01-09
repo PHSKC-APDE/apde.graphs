@@ -1,0 +1,268 @@
+---
+title: "Density Maps"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a density map using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+***Note!*** [`tmap`](https://r-tmap.github.io/tmap/) is sometimes used for static maps, but we demonstrate `ggplot2` for consistency with the other guides in this package. If you are interested in creating dynamic maps, we suggest starting with [`mapview`](https://r-spatial.github.io/mapview/).
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(apde.graphs)
+library(sf)
+```
+
+## Import & preview data
+
+### King County
+
+```{r import_county}
+kc <- apde.graphs::shapeKC
+plot(kc)
+```
+
+### Residential Parcels
+
+```{r import_parcels}
+parcels <- apde.graphs::shapeParcels
+plot(parcels)
+```
+
+### Interstate Highways
+
+```{r import_interstate}
+interstate <- apde.graphs::shapeInterstate
+plot(interstate)
+```
+
+## Create initial map with neutral background
+
+Start with a basic map of King County using a light neutral background color.
+
+```{r initial_plot}
+mymap <- ggplot() +
+  geom_sf(data = kc, 
+          fill = "#F5F3F3",   # light beige background
+          color = '#333333')  # border color is from Tableau Style Guide
+```
+
+```{r display_initial}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add parcel points
+
+Add residential parcels as points to see their distribution.
+
+```{r add_points}
+mymap <- mymap +
+  geom_sf(data = parcels,
+          shape = 1,          # hollow circles
+          size = 0.5,         # small points
+          alpha = 0.5,        # slight transparency
+          color = "#810f7c")  # circle color
+```
+
+```{r display_points}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Convert points to density visualization
+
+Replace individual points with a smoothed density visualization.
+
+```{r add_density}
+mymap <- ggplot() +
+
+  # Rebuild the base layer because otherwise would have points layer under the density layer
+  geom_sf(data = kc,
+          fill = "#F5F3F3",     # light beige background
+          color = '#333333') +  # border color is from Tableau Style Guide
+
+  # Create the density layer
+  stat_density_2d(data = st_coordinates(parcels) %>% # extract XY coordinates from shapefile object
+                   as.data.frame() %>%               # keep XY coordinates as a data.frame for ggplot
+                   setNames(c("x", "y")),            # rename the columns to "x" and "y"
+                 aes(x = x,                          # map the x aesthetic to the x coordinate
+                     y = y,                          # map the y aesthetic to the y coordinate
+                     fill = after_stat(level)),      # fill the polygons based on the density levels
+                 geom = "polygon",                   # use polygons to represent density levels
+                 alpha = 0.5)                        # transparency for the density polygons
+```
+
+```{r display_density}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Use custom color scheme & legend
+
+The [Tableau Style Guide](https://kc1.sharepoint.com/:w:/r/teams/DPH-TableauResources/_layouts/15/Doc.aspx?sourcedoc=%7B359811A5-92B0-4B13-B6DC-DD71CDBBA11B%7D&file=Tableau%20Style%20Guide%20v1.0.4.docx&action=default&mobileredirect=true) doesn't mention heat maps, but since housing density is neither positive nor negative, we will use the recommended neutral sequential color scheme.
+
+```{r color_scheme}
+mymap <- mymap +
+  scale_fill_gradientn(
+    colors = c("#f7fcfd", "#e0ecf4", "#bfd3e6", "#9ebcda", "#8c96c6",
+               "#8c6bb1", "#88419d", "#810f7c", "#4d004b"),
+    name = "Residential\n Density",                          # name for the legend
+    breaks = function(x) quantile(x, probs = c(0.05, 0.95)), # place breaks at 5th and 95th percentiles
+    labels = c("Low", "High"))                               # add labels values at break points
+```
+
+```{r display_color_scheme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add interstate highways
+
+Add interstate highways to assess whether residential density aligns with interstate corridors.
+
+```{r add_interstate}
+mymap <- mymap +
+  geom_sf(data = interstate,
+          color = 'red',  # highway color
+          linewidth = 2,  # line thickness
+          alpha = 0.8)    # transparency
+```
+
+```{r display_with_interstate}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add interstate labels
+
+Add text labels for interstate highways.
+
+```{r add_labels}
+mymap <- mymap +
+  geom_sf_label(data = interstate,
+                aes(label = Interstate), # label values
+                size = 4,                # font size
+                fontface = "bold",       # font type
+                color = "black",         # font color
+                fill = "white",          # label background color
+                alpha = 0.7,             # transparency
+                label.padding = unit(0.15, "lines"))
+```
+
+```{r display_with_labels}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add titles and format legend
+
+```{r add_titles}
+mymap <- mymap +
+  labs(title = "Residential Parcel Density and Interstate Highways",
+       subtitle = "King County",
+       x = "",  # no x-axis title
+       y = "")  # no y-axis title
+```
+
+```{r display_with_titles}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+#| message: false
+mymap <- mymap +
+  apde_theme() +
+  apde_caption(data_source = "King County GIS Open Data")
+```
+
+```{r display_with_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Tweak default theme
+
+Remove grid lines and adjust margins for a cleaner map display.
+
+```{r adjust_theme}
+mymap <- mymap +
+  theme(
+    panel.grid = element_blank(), # removes all grid lines from the panel
+    axis.text = element_blank()   # removes all axis text (tick) labels
+  ) 
+```
+
+```{r display_adjusted_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+mymap
+```
+
+## Save the plot
+
+`ggsave()` automatically detects file type from filename extension (.jpg, .png, .pdf, etc.).
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+
+ggsave('parcel_density_map.jpg',
+       mymap,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+```

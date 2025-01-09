@@ -1,0 +1,224 @@
+---
+title: "Bar Plots with Multiple Groups and Error Bars"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a bar plot using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(apde.graphs)
+library(data.table)
+library(scales) # to label axes with $, %, etc. 
+```
+
+## Import & preview synthetic data
+
+```{r generate_data}
+dt <- apde.graphs::icecreamDT
+head(dt)
+```
+
+## Create the base `ggplot2` bar plot
+
+```{r base_plot}
+ice_cream_plot <- ggplot(dt, aes(x = factor(year), 
+                                 y = mean_income,
+                                 fill = flavor)) +  # different color for each flavor
+  # Basic bar plot
+  geom_col(position = position_dodge(width = 0.8),  # adjust horizontally to show groups
+           width = 0.7)                             # adjust bar width
+```
+
+```{r display_base_plot}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add error bars to show uncertainty (95% confidence intervals)
+
+```{r error_bars}
+ice_cream_plot <- ice_cream_plot + 
+  geom_errorbar(aes(ymin = mean_income - 1.96*se,       # lower bound CI
+                    ymax = mean_income + 1.96*se),      # upper bound CI
+                position = position_dodge(width = 0.8), # adjust horizontally to align with bars
+                linewidth = 1,                          # width of the error bar
+                width = 0)                              # width of the horizontal lines at the ends of the bar
+```
+
+```{r display_error_bars}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add colors and scales
+
+```{r add_scales}
+ice_cream_plot <- ice_cream_plot +
+  # Custom colors using colorbrewer
+  scale_fill_brewer(palette = "Dark2") +  # One of many colorblind-friendly palettes
+
+  # Customize y-axis with dollar signs
+  scale_y_continuous(
+    limits = c(0, 100000),                # fix y-axis range
+    breaks = seq(0, 100000, 10000),       # show tick marks every $10,000
+    labels = scales::label_currency(prefix = '$')
+  )
+```
+
+```{r display_colors_scales}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add labels
+
+```{r add_labels}
+ice_cream_plot <- ice_cream_plot +
+  labs(
+    title = 'Mean Income by Ice Cream Preference',
+    subtitle = 'Non-representative Sample of Megalopolis Residents',
+    x = 'Year',
+    y = 'Mean Income (2020 dollars)', 
+    fill = 'Favorite Flavor'  # legend title
+  )
+```
+
+```{r display_labels}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+#| echo: true
+#| output: false
+ice_cream_plot <- ice_cream_plot +
+  
+  apde_caption(data_source = 'Synthetic dataset') +
+  
+  apde_theme()
+```
+
+```{r display_apde}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add horizontal reference line
+
+```{r add_hline}
+ice_cream_plot <- ice_cream_plot +
+  # Add reference line at overall mean
+  geom_hline(yintercept = mean(dt$mean_income), # geom_vline for vertical line
+             linetype = 'dashed',               # options: solid' dashed, dotdash, longdash, twodash
+             linewidth = 1,                     # thickness of line
+             color = 'red')                     # color of line
+```
+
+```{r display_hline}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Add annotations
+
+```{r add_annotations}
+ice_cream_plot <- ice_cream_plot +
+  # Add explanatory text
+  annotate(
+    geom = 'text',
+    x = 5,
+    y = 95000,
+    label = "Steepest increase\nfor 'Other' flavor",
+    hjust = 1  # horizontal justification
+  ) + 
+  
+  # Add arrow pointing to steepest increase
+  annotate(
+    geom = "segment",
+    x = 4.9, xend = 5.1,
+    y = 90000, yend = 85000,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  
+  # Add a shaded box around the text
+  annotate(
+    geom = 'rect',        # highlight an area of your graph
+    xmin = 4, xmax = 5.2, 
+    ymin = 90000, ymax = 100000,
+    alpha = 0.2,          # transparency (0 == most, 1 == least)
+    fill = 'green',       # color of box 
+    col = NA)             # color of box outline
+```
+
+```{r display_annotated}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+ice_cream_plot
+```
+
+## Save the plot
+
+`ggsave` automatically detects file type from filename extension (.jpg, .png, .pdf, etc.)
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+ggsave(filename = 'income_by_ice_cream_preference.jpg', # filename with extension
+       plot = ice_cream_plot,                           # plot to save
+       width = 10,                                      # width in inches
+       height = 6,                                      # height in inches
+       dpi = 600)                                       # resolution in dots per inch
+```
+
+-- *`r paste0("Updated by ", Sys.getenv("USERNAME"), ", ", Sys.Date())`*

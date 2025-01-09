@@ -1,0 +1,23 @@
+Package: apde.graphs
+Type: Package
+Title: Provides standard formatting for APDE graphics
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: Danny Colombara <Data.Request@kingcounty.gov>
+Description: Provides a theme and standard caption for APDEs ggplot2 objects.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+Imports: 
+    ggplot2
+Suggests:    
+    data.table, 
+    knitr, 
+    quarto (>= 1.4),
+    RColorBrewer, 
+    scales
+Depends: 
+    R (>= 4.0)
+
