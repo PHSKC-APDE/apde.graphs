@@ -38,14 +38,8 @@ myplot <- ggplot(dt, aes(x = age,
                          shape = group)) + # different shape for each group
   
   # Basic scatter plot
-  geom_point(alpha = 0.3,                  # transparency of dots (0 == most, 1 == least)
-             size = 3) +                   # dot size
-  
-  # Add smoothed fit lines with confidence intervals
-  geom_smooth(method = 'loess',            # LOESS for non-linear trends, can also use 'lm' or 'glm'
-              se = TRUE,                   # show CI
-              alpha = 0.2,                 # transparency of CI (0 == most, 1 == least)
-              linewidth = 1.2)             # line thickness
+  geom_point(alpha = 0.9,                  # dot transparency
+             size = 3)                     # dot size
 ```
 
 ```{r display_base_plot}
@@ -91,7 +85,7 @@ myplot <- myplot +
     x = 'Age (years)',
     y = 'Wisdom Score',
     color = 'Study Group', # title for the color legend
-    shape = 'Study Group'  # title for the shape legend
+    shape = 'Study Group'  # title for the shape legend (same so that they combine into one legend)
   )
 ```
 
@@ -129,26 +123,9 @@ myplot <- myplot +
 myplot
 ```
 
-## Add legend transparency
-
-```{r add_legend_customization}
-myplot <- myplot +
-  guides(shape = guide_legend(
-    override.aes = list(alpha = 0) # legend background transparency (0 == most, 1 == least)
-    ))
-```
-
-```{r display_with_custom_legends}
-#| fig-width: 10 
-#| fig-height: 6 
-#| dpi: 150 
-#| message: false
-#| echo: false
-
-myplot
-```
-
 ## Add vertical reference line
+
+Note the age of peak wisdom for Group 2.
 
 ```{r add_ref_line}
 myplot <- myplot +
@@ -195,12 +172,54 @@ myplot <- myplot +
     geom = 'rect',                          # highlight an area of your graph
     xmin = 33, xmax = 55,
     ymin = 19.85, ymax = 20,
-    alpha = 0.2,                            # transparency of rectangle (0 == most, 1 == least)
+    alpha = 0.2,                            # transparency of rectangle
     fill = 'green',                         # color of rectangle
     col = NA)                               # color of outline, NA == no outline
 ```
 
 ```{r display_plot}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
+```
+
+## Add trend lines
+
+Add trend lines to better discern the patterns displayed by the scatter plot.
+
+```{r add_trend_lines}
+myplot <- myplot +
+  # Add smoothed fit lines with confidence intervals
+  geom_smooth(method = 'loess',            # LOESS for non-linear trends, can also use 'lm' or 'glm'
+              se = TRUE,                   # show CI
+              alpha = 0.5,                 # transparency of CI
+              linewidth = 1.2)             # line thickness
+```
+
+```{r display_with_trend_lines}
+#| fig-width: 10 
+#| fig-height: 6 
+#| dpi: 150 
+#| message: false
+#| echo: false
+
+myplot
+```
+
+## Add legend transparency
+
+```{r add_legend_customization}
+myplot <- myplot +
+  guides(shape = guide_legend(
+    override.aes = list(alpha = 0) # legend background completely transparent
+    ))
+```
+
+```{r display_with_custom_legends}
 #| fig-width: 10 
 #| fig-height: 6 
 #| dpi: 150 
