@@ -24,11 +24,14 @@ A spatial dataset containing point locations for medical centers in King County.
 Contains locations for medical facilities across King County.
 }
 \examples{
+\dontrun{
 # Basic plot of medical center locations
 library(ggplot2)
+library(sf)
 ggplot() +
   geom_sf(data = shapeKC) +
   geom_sf(data = shapeMedicalCenters, color = "red")
+}
 
 }
 \keyword{datasets}

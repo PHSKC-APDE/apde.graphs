@@ -26,11 +26,14 @@ Centroids are calculated from shapeBigCities using st_centroid().
 Includes the same eight major King County cities.
 }
 \examples{
+\dontrun{
 # Plot city boundaries with centroid points
 library(ggplot2)
+library(sf)
 ggplot() +
   geom_sf(data = shapeBigCities) +
   geom_sf(data = shapeBigCities_centroids, color = "red")
+}
 
 }
 \keyword{datasets}

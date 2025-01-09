@@ -182,10 +182,13 @@
 #' @source Census 2020 shapefiles, accessed from APDE-CDIP/Shapefiles
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of city boundaries
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapeBigCities) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapeBigCities
 #' @usage data(shapeBigCities)
@@ -210,11 +213,14 @@
 #' @source Derived from shapeBigCities using sf::st_centroid()
 #'
 #' @examples
+#' \dontrun{
 #' # Plot city boundaries with centroid points
 #' library(ggplot2)
+#' library(sf)
 #' ggplot() +
 #'   geom_sf(data = shapeBigCities) +
 #'   geom_sf(data = shapeBigCities_centroids, color = "red")
+#' }
 #'
 #' @name shapeBigCities_centroids
 #' @usage data(shapeBigCities_centroids)
@@ -239,10 +245,13 @@
 #' @source APDE-CDIP/Shapefiles/HRA/hra_2020_nowater.shp
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of HRA boundaries
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapeHRA20) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapeHRA20
 #' @usage data(shapeHRA20)
@@ -266,10 +275,13 @@
 #' @source tigris::primary_roads(year = 2022)
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot interstate highways
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapeInterstate) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapeInterstate
 #' @usage data(shapeInterstate)
@@ -288,13 +300,16 @@
 #'   \item{geometry}{sfc_MULTIPOLYGON. Spatial geometry defining King County}
 #' }
 #'
-#' @source \\dphcifs\APDE-CDIP\Shapefiles\Region\region_hra20_nowater.shp
+#' @source //dphcifs/APDE-CDIP/Shapefiles/Region/region_hra20_nowater.shp
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of King County boundaries
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapeKC) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapeKC
 #' @usage data(shapeKC)
@@ -319,11 +334,14 @@
 #' @source //Kcitfsrprpgdw01/kclib/Plibrary2/pubsafe/shapes/point/medical_facilities.shp
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of medical center locations
 #' library(ggplot2)
+#' library(sf)
 #' ggplot() +
 #'   geom_sf(data = shapeKC) +
 #'   geom_sf(data = shapeMedicalCenters, color = "red")
+#' }
 #'
 #' @name shapeMedicalCenters
 #' @usage data(shapeMedicalCenters)
@@ -345,12 +363,15 @@
 #' @source kcparcelpop::pcoords
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of parcel coordinates
 #' library(ggplot2)
+#' library(sf)
 #' ggplot() +
 #'   geom_sf(data = shapeKC) +
 #'   geom_sf(data = shapeParcels, color = "red")
-#'
+#' }
+#' 
 #' @name shapeParcels
 #' @usage data(shapeParcels)
 #' @keywords datasets
@@ -374,10 +395,13 @@
 #' @source Census 2020 shapefiles, accessed from APDE-CDIP/Shapefiles
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of PUMA boundaries
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapePUMA20) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapePUMA20
 #' @usage data(shapePUMA20)
@@ -401,10 +425,13 @@
 #' @source //dphcifs/APDE-CDIP/Shapefiles/Region/region_hra20_nowater.shp
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of region boundaries
 #' library(ggplot2)
+#' library(sf)
 #' ggplot(shapeRegions20) +
 #'   geom_sf()
+#' }
 #'
 #' @name shapeRegions20
 #' @usage data(shapeRegions20)
@@ -427,11 +454,14 @@
 #' @source //Kcitfsrprpgdw01/kclib/Plibrary2/pubsafe/shapes/point/hospitals.shp
 #'
 #' @examples
+#' \dontrun{
 #' # Basic plot of trauma hospital locations
 #' library(ggplot2)
+#' library(sf)
 #' ggplot() +
 #'   geom_sf(data = shapeKC) +
 #'   geom_sf(data = shapeTraumaHospitals, color = "red")
+#' }
 #'
 #' @name shapeTraumaHospitals
 #' @usage data(shapeTraumaHospitals)

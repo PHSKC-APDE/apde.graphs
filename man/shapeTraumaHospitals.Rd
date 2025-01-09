@@ -24,11 +24,14 @@ A spatial dataset containing point locations for trauma hospitals in King County
 Contains locations for acute service (trauma) hospitals in King County.
 }
 \examples{
+\dontrun{
 # Basic plot of trauma hospital locations
 library(ggplot2)
+library(sf)
 ggplot() +
   geom_sf(data = shapeKC) +
   geom_sf(data = shapeTraumaHospitals, color = "red")
+}
 
 }
 \keyword{datasets}

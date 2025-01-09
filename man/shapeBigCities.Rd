@@ -35,10 +35,13 @@ The dataset includes boundaries for eight major King County cities:
 }
 }
 \examples{
+\dontrun{
 # Basic plot of city boundaries
 library(ggplot2)
+library(sf)
 ggplot(shapeBigCities) +
   geom_sf()
+}
 
 }
 \keyword{datasets}

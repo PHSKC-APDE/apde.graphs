@@ -25,10 +25,13 @@ through King County.
 Contains I-5, I-90, and I-405
 }
 \examples{
+\dontrun{
 # Basic plot interstate highways
 library(ggplot2)
+library(sf)
 ggplot(shapeInterstate) +
   geom_sf()
+}
 
 }
 \keyword{datasets}

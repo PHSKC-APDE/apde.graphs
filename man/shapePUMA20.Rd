@@ -26,10 +26,13 @@ excluded.
 Contains boundaries for all King County PUMAs (codes 23301-23318).
 }
 \examples{
+\dontrun{
 # Basic plot of PUMA boundaries
 library(ggplot2)
+library(sf)
 ggplot(shapePUMA20) +
   geom_sf()
+}
 
 }
 \keyword{datasets}

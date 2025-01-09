@@ -12,7 +12,7 @@ An sf (simple features) object containing interstate highways:
 }
 }
 \source{
-\\dphcifs\APDE-CDIP\Shapefiles\Region\region_hra20_nowater.shp
+//dphcifs/APDE-CDIP/Shapefiles/Region/region_hra20_nowater.shp
 }
 \usage{
 data(shapeKC)
@@ -22,10 +22,13 @@ A spatial dataset containing boundary polygons for King County. Large water
 bodies are excluded.
 }
 \examples{
+\dontrun{
 # Basic plot of King County boundaries
 library(ggplot2)
+library(sf)
 ggplot(shapeKC) +
   geom_sf()
+}
 
 }
 \keyword{datasets}

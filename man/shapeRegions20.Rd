@@ -25,10 +25,13 @@ using 2020 vintage boundaries.
 Contains boundaries for all King County Regions, excluding water bodies.
 }
 \examples{
+\dontrun{
 # Basic plot of region boundaries
 library(ggplot2)
+library(sf)
 ggplot(shapeRegions20) +
   geom_sf()
+}
 
 }
 \keyword{datasets}

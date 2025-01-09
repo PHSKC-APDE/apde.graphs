@@ -22,11 +22,14 @@ A spatial dataset containing points for a 1/20th sample of King County
 residential parcel point coordinates. Sampled on 1/6/2025.
 }
 \examples{
+\dontrun{
 # Basic plot of parcel coordinates
 library(ggplot2)
+library(sf)
 ggplot() +
   geom_sf(data = shapeKC) +
   geom_sf(data = shapeParcels, color = "red")
+}
 
 }
 \keyword{datasets}

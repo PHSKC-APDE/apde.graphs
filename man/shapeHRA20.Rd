@@ -26,10 +26,13 @@ Contains boundaries for all King County Health Reporting Areas,
 excluding water bodies.
 }
 \examples{
+\dontrun{
 # Basic plot of HRA boundaries
 library(ggplot2)
+library(sf)
 ggplot(shapeHRA20) +
   geom_sf()
+}
 
 }
 \keyword{datasets}
