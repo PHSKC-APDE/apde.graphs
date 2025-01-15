@@ -19,11 +19,8 @@ The package includes four helper functions to streamline your visualization work
 - `apde_quantile_breaks()`: Generates evenly spaced breaks using data quantiles
 - `apde_rotate_xlab()`: Rotates x-axis labels for better readability
 
-## Examples
-For detailed examples and usage guides, visit our [Wiki](https://github.com/PHSKC-APDE/apde.graphs/wiki).
-
-### Quick Reference Gallery
-Click on any visualization to see its implementation details:
+## Examples 
+Click on any image in our gallery below or visit our [Wiki](https://github.com/PHSKC-APDE/apde.graphs/wiki) for detailed examples and usage guides. 
 
 <table>
 <tr>
