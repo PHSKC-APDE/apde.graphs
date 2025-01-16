@@ -214,7 +214,7 @@ apde_theme <- function(base_size = 12,
 
   if (length(matching_family) == 1) {
     if(base_family != matching_family){
-      message(paste0("'", base_family, "' mapped to the '", matches, "' font family"))
+      # message(paste0("'", base_family, "' mapped to the '", matches, "' font family"))
     }
     base_family <- matching_family
   } else {
