@@ -124,6 +124,7 @@ Click on any image in our gallery below or visit our [Wiki](https://github.com/P
 </tr>
 </table>
 
+To understand why I refuse to create a pie chart example, [click here](http://static1.squarespace.com/static/56713bf4dc5cb41142f28d1f/5671e8bf816924fc22651410/5671eb2e816924fc22651bc9/1450306350612/devourThePie3.gif?format=original).
 
 ## Problems or Suggestions?
 
