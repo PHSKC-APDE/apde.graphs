@@ -28,18 +28,17 @@ Creates a standardized caption including division name, current date, and data s
 Multiple lines of additional text will be combined with no line breaks.
 }
 \examples{
-\dontrun{
+library(ggplot2)
 # Add basic caption
-ggplot(pressure, aes(temperature, pressure)) +
+ggplot(wisdomDT, aes(age, wisdom_score)) +
   geom_point() +
-  apde_caption("Physical measurement data")
+  apde_caption("Synthetic Wisdom Data")
 
 # Add multi-line additional text
-ggplot(pressure, aes(temperature, pressure)) +
+ggplot(wisdomDT, aes(age, wisdom_score)) +
   geom_point() +
-  apde_caption("Physical measurement data",
-               additional_text = c("Note 1: Data excludes outliers\n",
-                                 "Note 2: Sample sizes vary\n"))
-}
+  apde_caption("Synthetic Wisdom Data",
+               additional_text = c("Blah blah blah\n",
+                                   "etc. etc. etc.\n"))
 
 }

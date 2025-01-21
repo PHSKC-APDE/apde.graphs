@@ -4,3 +4,4 @@
 ^wiki$
 ^quarto_docs$
 ^data-raw$
+^\.github$

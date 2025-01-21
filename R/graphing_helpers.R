@@ -10,22 +10,22 @@
 #' Multiple lines of additional text will be combined with no line breaks.
 #'
 #' @examples
-#' \dontrun{
+#' library(ggplot2)
 #' # Add basic caption
-#' ggplot(pressure, aes(temperature, pressure)) +
+#' ggplot(wisdomDT, aes(age, wisdom_score)) +
 #'   geom_point() +
-#'   apde_caption("Physical measurement data")
+#'   apde_caption("Synthetic Wisdom Data")
 #'
 #' # Add multi-line additional text
-#' ggplot(pressure, aes(temperature, pressure)) +
+#' ggplot(wisdomDT, aes(age, wisdom_score)) +
 #'   geom_point() +
-#'   apde_caption("Physical measurement data",
-#'                additional_text = c("Note 1: Data excludes outliers\n",
-#'                                  "Note 2: Sample sizes vary\n"))
-#' }
+#'   apde_caption("Synthetic Wisdom Data",
+#'                additional_text = c("Blah blah blah\n",
+#'                                    "etc. etc. etc.\n"))
 #'
 #' @import ggplot2
-#'
+#' @importFrom grDevices windowsFonts
+#' 
 #' @return A ggplot2 labs object containing a caption with division name, date, and data source
 #' @export
 apde_caption <- function(data_source = "XYZ dataset",
@@ -51,8 +51,81 @@ apde_caption <- function(data_source = "XYZ dataset",
   labs(caption = caption)
 }
 
+# apde_linear_breaks() ----
+#' Generate Evenly Spaced Integer Breaks
+#'
+#' @description
+#' `apde_linear_breaks()` creates a sequence of integer breaks evenly spaced between
+#' the minimum and maximum values of the input data. The function is useful for both
+#' axis breaks and legend breaks in ggplot2 visualizations.
+#'
+#' @param data Numeric vector of values from which to calculate breaks
+#' @param n Integer specifying the desired number of breaks (default = 5)
+#'
+#' @details
+#' The function creates breaks by dividing the range between the minimum and maximum
+#' values into equal intervals. This approach differs from `apde_quantile_breaks()`,
+#' which creates breaks based on the data distribution. Use this function when you
+#' want breaks to be evenly spaced regardless of how the data is distributed.
+#'
+#' @source Ron Buie's legend_breaker() function
+#'
+#' @return
+#' A numeric vector of integer break points evenly spaced between the data's minimum
+#' and maximum values
+#'
+#' @examples
+#' # Example 1: Compare linear breaks vs. quantile breaks
+#' # Create a right-skewed distribution
+#' set.seed(123)
+#' skewed_data <- c(rnorm(80, mean = 10, sd = 2),  # Most data clusters here
+#'                  rnorm(20, mean = 50, sd = 5))   # Some outliers here
+#'                  
+#' # Compare the different approaches
+#' linear_breaks <- apde_linear_breaks(skewed_data, n = 5)
+#' quantile_breaks <- apde_quantile_breaks(skewed_data, n = 5)
+#' 
+#' print(paste("Linear breaks are evenly spaced:", 
+#'            paste(round(linear_breaks), collapse = ', ')))
+#' print(paste("Quantile breaks follow the data distribution:", 
+#'            paste(round(quantile_breaks), collapse = ', ')))
+#'
+#' # Example 2: Basic usage with ggplot2
+#' library(ggplot2)
+#' 
+#' ggplot(lifespanDT_raw, aes(x = city, y = lifespan)) +
+#'   geom_point(aes(color = lifespan), alpha = 0.5) +
+#'   scale_color_continuous(
+#'     breaks = apde_linear_breaks(lifespanDT_raw$lifespan)
+#'   ) +
+#'   labs(title = "Distribution of Lifespans by City",
+#'        color = "Age (years)")
+#'        
+#' @seealso 
+#' \code{\link{apde_quantile_breaks}} for breaks based on data distribution
+#' 
+#' @export
+apde_linear_breaks <- function(data, n = 5) {
+  # Input validation
+  if (!is.numeric(data)) {
+    stop("`data` must be a numeric vector")
+  }
+  if (!is.numeric(n) || n < 2) {
+    stop("`n` must be a numeric value >= 2")
+  }
+  
+  # Calculate range
+  bottom <- ceiling(min(data))
+  top <- floor(max(data))
+  
+  # Generate evenly spaced breaks
+  breaks <- quantile(bottom:top, probs = seq(0, 1, length.out = n))
+  
+  return(as.integer(breaks))
+}
+
 # apde_quantile_breaks() ----
-#' Generate Evenly Spaced Breaks Using Data Quantiles
+#' Generate Data-Driven Breaks Using Quantiles
 #'
 #' @description
 #' `apde_quantile_breaks()` creates a sequence of integer breaks based on the quantiles
@@ -63,12 +136,14 @@ apde_caption <- function(data_source = "XYZ dataset",
 #' @param n Integer specifying the desired number of breaks (default = 5)
 #'
 #' @details
-#' The function calculates breaks by computing quantiles of the actual data
-#' distribution, rather than creating evenly spaced breaks between the minimum
-#' and maximum values. This approach ensures the breaks reflect where
-#' your data actually clusters, making visualizations more informative.
-#'
-#' @source Inspired by `legend_breaker()`  by Ron Buie
+#' The function calculates breaks based on the actual distribution of your data
+#' using quantiles, rather than creating evenly spaced breaks like 
+#' `apde_linear_breaks()`. This approach ensures the breaks reflect where your 
+#' data actually clusters, making visualizations more informative when data is 
+#' not uniformly distributed. For example, if most of your data points fall 
+#' within a narrow range with some outliers, `apde_quantile_breaks()` will place 
+#' more breaks in the dense regions where they are most needed, while 
+#' `apde_linear_breaks()` would space them evenly across the full range.
 #'
 #' @return
 #' A numeric vector of integer break points based on data quantiles
@@ -81,20 +156,20 @@ apde_caption <- function(data_source = "XYZ dataset",
 #'                  rnorm(20, mean = 50, sd = 5))   # Some outliers here
 #'                  
 #' # Compare the different approaches
-#' even_breaks <- seq(min(skewed_data), max(skewed_data), length.out = 5)
 #' quantile_breaks <- apde_quantile_breaks(skewed_data, n = 5)
+#' linear_breaks <- apde_linear_breaks(skewed_data, n = 5)
 #' 
-#' print(paste("Even breaks place many breaks in sparse regions:", 
-#'              paste(round(even_breaks), collapse = ', ')))
-#' print(paste("Quantile breaks concentrate where the data clusters:", 
-#'              paste(round(quantile_breaks), collapse = ', ')))
+#' print(paste("Quantile breaks follow the data distribution:", 
+#'            paste(round(quantile_breaks), collapse = ', ')))
+#' print(paste("Linear breaks are evenly spaced:", 
+#'            paste(round(linear_breaks), collapse = ', ')))
 #'
 #' # Example 2: Basic usage with ggplot2
 #' library(ggplot2)
 #' 
 #' ggplot(lifespanDT_raw, aes(x = city, y = lifespan)) +
 #'   geom_point(aes(color = lifespan), alpha = 0.5) +
-#'   scale_color_viridis_c(
+#'   scale_color_continuous(
 #'     breaks = apde_quantile_breaks(lifespanDT_raw$lifespan)
 #'   ) +
 #'   labs(title = "Distribution of Lifespans by City",
@@ -102,6 +177,7 @@ apde_caption <- function(data_source = "XYZ dataset",
 #'
 #' @seealso 
 #' \code{\link{apde_theme}} for the default APDE `ggplot2` theme
+#' \code{\link{apde_linear_breaks}} for evenly distributed breaks
 #' 
 #' @importFrom stats quantile
 #' @export
@@ -134,17 +210,17 @@ apde_quantile_breaks <- function(data, n = 5) {
 #' @param hjust Horizontal justification (0-1)
 #'
 #' @examples
-#' \dontrun{
+#' library(ggplot2)
+#' 
 #' # Default 45-degree rotation
-#' ggplot(pressure, aes(factor(temperature), pressure)) +
+#' ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
 #'   geom_col() +
 #'   apde_rotate_xlab()
 #'
 #' # Custom angle and justification
-#' ggplot(pressure, aes(factor(temperature), pressure)) +
+#' ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
 #'   geom_col() +
 #'   apde_rotate_xlab(angle = 90, hjust = 0.5)
-#' }
 #'
 #' @import ggplot2
 #'
@@ -182,20 +258,19 @@ apde_rotate_xlab <- function(angle = 45, hjust = 1) {
 #' * Minimal panel spacing for faceted plots
 #'
 #' @examples
-#' \dontrun{
+#' library(ggplot2)
+#' 
 #' # Basic usage
-#' ggplot(pressure, aes(temperature, pressure)) +
+#' ggplot(wisdomDT, aes(age, wisdom_score)) +
 #'   geom_point() +
 #'   apde_theme()
 #'
 #' # Custom base size
-#' ggplot(pressure, aes(temperature, pressure)) +
+#' ggplot(wisdomDT, aes(age, wisdom_score)) +
 #'   geom_point() +
 #'   apde_theme(base_size = 14)
-#' }
 #'
 #' @import ggplot2
-#' @importFrom grDevices windowsFonts
 #'
 #' @return A complete ggplot2 theme based on theme_minimal with APDE-specific modifications
 #' @seealso \code{\link{apde_caption}}, \code{\link{apde_rotate_xlab}}
@@ -214,7 +289,6 @@ apde_theme <- function(base_size = 12,
 
   if (length(matching_family) == 1) {
     if(base_family != matching_family){
-      # message(paste0("'", base_family, "' mapped to the '", matches, "' font family"))
     }
     base_family <- matching_family
   } else {

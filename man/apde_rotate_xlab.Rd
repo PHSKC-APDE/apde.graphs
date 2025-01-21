@@ -19,17 +19,17 @@ Modifies the theme to rotate x-axis labels by a specified angle, improving reada
 for long labels or crowded axes.
 }
 \examples{
-\dontrun{
+library(ggplot2)
+
 # Default 45-degree rotation
-ggplot(pressure, aes(factor(temperature), pressure)) +
+ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
   geom_col() +
   apde_rotate_xlab()
 
 # Custom angle and justification
-ggplot(pressure, aes(factor(temperature), pressure)) +
+ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
   geom_col() +
   apde_rotate_xlab(angle = 90, hjust = 0.5)
-}
 
 }
 \seealso{

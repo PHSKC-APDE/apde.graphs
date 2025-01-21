@@ -30,17 +30,17 @@ Key theme modifications include:
 }
 }
 \examples{
-\dontrun{
+library(ggplot2)
+
 # Basic usage
-ggplot(pressure, aes(temperature, pressure)) +
+ggplot(wisdomDT, aes(age, wisdom_score)) +
   geom_point() +
   apde_theme()
 
 # Custom base size
-ggplot(pressure, aes(temperature, pressure)) +
+ggplot(wisdomDT, aes(age, wisdom_score)) +
   geom_point() +
   apde_theme(base_size = 14)
-}
 
 }
 \seealso{
