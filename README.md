@@ -120,10 +120,15 @@ Click on any image in our gallery below or visit our [Wiki](https://github.com/P
     <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/trend_line_chi">
         <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/trend_line_chi_files/figure-commonmark/display_tweak_default_theme-1.png" width="300" alt="CHI Style Trend Line"/>
     </a>
+</td>
 <td width="50%">
+    <a href="https://github.com/PHSKC-APDE/apde.graphs/wiki/bump_plot">
+        <img src="https://github.com/PHSKC-APDE/apde.graphs/wiki/bump_plot_files/figure-commonmark/display_final-1.png" width="300" alt="Bump Plot"/>
+    </a>
 </td>
 </tr>
 </table>
+
 
 To understand why I refuse to create a pie chart example, [click here](http://static1.squarespace.com/static/56713bf4dc5cb41142f28d1f/5671e8bf816924fc22651410/5671eb2e816924fc22651bc9/1450306350612/devourThePie3.gif?format=original).
 

@@ -157,6 +157,42 @@
 #' @keywords datasets
 "lifespanDT_raw"
 
+# majorsDT ----
+#' Synthetic Neverland University Enrollment by Majors 
+#'
+#' A synthetic dataset containing enrollment counts and rankings for the top 10 college
+#' majors at Neverland University across multiple years. The data is designed to
+#' demonstrate various ggplot2 visualization techniques, including trend analysis,
+#' ranking changes, and confidence interval plotting.
+#'
+#' @format A data.table with enrollment statistics and rankings:
+#' \describe{
+#'   \item{major}{Character. Academic major (e.g., "Engineering", "Psychology")}
+#'   \item{school}{Character. School within the university (Engineering, Liberal Arts, Business, Health Sciences)}
+#'   \item{year}{Numeric. Academic year from 2016 to 2025}
+#'   \item{count}{Numeric. Number of students enrolled in the major}
+#'   \item{ranking}{Numeric. Ranking from 1-10 based on enrollment count}
+#'   \item{rate}{Numeric. Proportion of total university enrollment (per 10,000 students)}
+#'   \item{rate_lower}{Numeric. Lower bound of 95% confidence interval for rate}
+#'   \item{rate_upper}{Numeric. Upper bound of 95% confidence interval for rate}
+#' }
+#'
+#' @details The dataset is synthetically generated with the following characteristics:
+#' * Top 3 majors maintain relatively stable rankings with small year-to-year variations
+#' * Kinesiology shows a consistent upward trend in enrollment
+#'
+#' @source Generated using synthetic data.
+#' Created specifically for demonstrating ggplot2 visualization techniques
+#' including rankings analysis, enrollment trends, and confidence interval plotting.
+#'
+#' @examples
+#' head(apde.graphs::majorsDT)
+#'
+#' @name majorsDT
+#' @usage data(majorsDT)
+#' @keywords datasets
+"majorsDT"
+
 # shapeBigCities ----
 #' King County Major Cities Shapefile
 #'
