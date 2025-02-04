@@ -1,7 +1,7 @@
 Package: apde.graphs
 Type: Package
 Title: Provides standard formatting for APDE graphics
-Version: 1.0.0
+Version: 1.0.1
 Author: Danny Colombara
 Maintainer: Danny Colombara <Data.Request@kingcounty.gov>
 Description: Provides a theme and standard caption for APDEs ggplot2 objects plus examples for standard graphics.

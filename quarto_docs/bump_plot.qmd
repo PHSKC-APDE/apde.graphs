@@ -1,0 +1,223 @@
+---
+title: "Bump Plots"
+format: gfm
+prefer-html: true
+self-contained: false
+editor: visual
+knitr:
+  opts_chunk:
+    comment: ""
+df-print: kable
+---
+
+This is a step-by-step guide to building a bump plot using `ggplot2`. While you would typically write all components in a single code block using `+` to connect elements, we hope splitting the code will illustrate how each snippet contributes to the final visualization.
+
+## Load libraries
+
+```{r setup}
+#| echo: true
+#| output: false
+library(ggplot2)
+library(data.table)
+library(apde.graphs)
+library(ggrepel)
+```
+
+## Import and preview data
+
+The majorsDT dataset is included in the apde.graphs package for demonstration purposes.
+
+```{r import_data}
+dt <- apde.graphs::majorsDT
+head(dt)
+```
+
+## Create initial line plot
+
+Start with basic lines and points showing the ranking changes for each major.
+
+```{r initial_plot}
+myplot <- ggplot(dt, 
+                 aes(x = year, 
+                     y = ranking, 
+                     group = major)) +
+  geom_line(aes(color = major), linewidth = 1) + # lines connecting points
+  geom_point(aes(color = major), size = 3)       # points for each year
+```
+
+```{r display_initial}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Format axes
+
+Format x-axis to show all years. Reverse y-axis so rank 1 appears at the top.
+
+```{r format_axes}
+myplot <- myplot +
+  scale_x_continuous(breaks = 2016:2025,                       # show every year
+                    expand = expansion(mult = c(0, 0.1))) +    # pad right side of graph for eventual labels
+  scale_y_reverse(breaks = 1:10)                               # reverse y-axis for ranks
+```
+
+```{r display_with_axes}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add titles
+
+Add title and subtitle, remove y-axis label since ranking is self-explanatory.
+
+```{r add_titles}
+myplot <- myplot +
+  labs(title = "Top 10 Majors at Neverland University",
+       subtitle = "2016-2025",
+       x = "Year",
+       y = "")
+```
+
+```{r display_with_titles}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add APDE customizations
+
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
+
+```{r add_theme}
+myplot <- myplot +
+  apde_theme() +
+  apde_caption(data_source = "apde.graphs::majorsDT")
+```
+
+```{r display_with_theme}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Prepare for labeling
+
+With many categories, a color-coded legend can be challenging to read. Instead, we'll label each line directly at their start and end points.
+
+First, create a sub-dataset with the first and last year that each major was in the top 10. We'll use this to identify where to place our text.
+
+```{r prepare_labels}
+end_labels <- majorsDT[, .(
+  year_start = min(year),
+  ranking_start = ranking[which.min(year)],
+  year_end = max(year),
+  ranking_end = ranking[which.max(year)]
+), by = major]
+
+end_labels <- rbind(
+  end_labels[, .(year = year_start, ranking = ranking_start, major)],
+  end_labels[, .(year = year_end, ranking = ranking_end, major)]
+)
+```
+
+## Hide legend and grid lines
+
+Hide the legend since we will use labels. Also remove grid lines and adjust margins.
+
+```{r drop_legends}
+myplot <- myplot +
+  theme(legend.position = "none",                    # remove legend
+        panel.grid.major = element_blank(),          # remove grid lines
+        plot.margin = margin(r = 10, l = 10,         # adjust plot margins
+                           t = 10, b = 10))
+```
+
+```{r display_drop_legends}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Add initial labels
+
+Add the labels that we identified in `end_labels`.
+
+```{r add_initial_labels}
+myplot_initial <- myplot +
+  geom_text(data = end_labels,
+                  aes(label = major, color = major),
+                  hjust = -0.1, size = 3)            
+```
+
+```{r display_with_initial_labels}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot_initial
+```
+
+## Optimize label placement
+
+As you can see, the labels in `myplot_initial` aren't optimally placed for readability. Let's try again. This time we'll use `ggrepel::geom_text_repel` for the interior points (2017-2024) to avoid overlapping. For the exterior points (2016 and 2025) we will use custom formatting to ensure they are outside the main body of the graph.
+
+```{r optimize_labels}
+myplot <- myplot +
+# Add labels for 2016 (start year)
+  geom_text(data = dt[ranking %in% 1:10 & year == "2016"],
+            aes(label = major, color = major),
+            hjust = 0, nudge_x = -.9, size = 3) +
+# Add labels for 2025 (end year)
+  geom_text(data = dt[ranking %in% 1:10 & year == "2025"],
+            aes(label = major, color = major),
+            hjust = 0, nudge_x = .2, size = 3) +
+# Add labels for 2017:2024
+  geom_text_repel(data = end_labels[year %in% 2017:2024],
+                aes(label = major, color = major),
+                hjust = -0.1, size = 3) 
+```
+
+```{r display_final}
+#| fig-width: 11 
+#| fig-height: 8.5
+#| dpi: 150
+#| echo: false
+#| warning: false
+myplot
+```
+
+## Save the plot
+
+ggsave() automatically detects file type from filename extension (.jpg, .png, .pdf, etc.).
+
+```{r save_plot}
+#| echo: true
+#| output: false
+#| eval: false
+ggsave('top_majors_bump.jpg',
+       myplot,
+       width = 11,
+       height = 8.5,
+       dpi = 600,
+       units = 'in')
+```
+
+-- *`r paste0("Created by ", Sys.getenv("USERNAME"), ", ", Sys.Date())`*
