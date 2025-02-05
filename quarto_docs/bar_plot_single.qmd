@@ -39,6 +39,7 @@ head(dt_raw)
 ```
 
 ### Identify the city with the longest life span
+
 ```{r max_city}
 max_city <- dt_raw[, .(mean_lifespan = mean(lifespan)), by = city][which.max(mean_lifespan), city]
 print(max_city)
@@ -144,15 +145,14 @@ plot_raw
 
 ## Add APDE customizations
 
-The `apde_caption()`, `apde_theme()`, and `apde_rotate_xlab()` elements are from the `apde.graphs` package, not `ggplot2`.
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
 
 ```{r add_theme}
 #| echo: true
 #| output: false
 plot_raw <- plot_raw +
     apde_caption(data_source = 'Synthetic dataset') +
-    apde_theme() +
-    apde_rotate_xlab() # pivots x-axis labels by 45 degrees to reduce crowding
+    apde_theme()
 ```
 
 ```{r display_with_theme}
@@ -166,11 +166,13 @@ plot_raw
 ```
 
 ## Tweak theme
+
 Drop legend since it is not useful in this graph.
 
 ```{r tweak_theme}
 plot_raw <- plot_raw + 
-  theme(legend.position = 'none')
+  theme(legend.position = 'none', 
+        axis.text.x = element_text(angle = 45, hjust = 1))  # pivot x-axis labels by 45 degrees to reduce crowding
 ```
 
 ```{r display_with_tweaked_theme}
@@ -252,9 +254,8 @@ plot_annotated
 
 ```{r create_horizontal}
 plot_horizontal <- plot_raw + 
-  coord_flip() +               # rotates the entire plot
-  apde_rotate_xlab(angle = 0,  # rotated x axis labels not needed for horizontal version
-                  hjust = 0.5) # horizontal justification
+  coord_flip() +    # rotates the entire plot
+  theme(axis.text.x = element_text(angle = 0))  # undo the pivot of the x-axis
 ```
 
 ```{r display_horizontal}
@@ -277,8 +278,7 @@ city_order <- sort(unique(plot_raw$data$city), decreasing = TRUE)
 plot_horizontal <- plot_raw + 
   scale_x_discrete(limits = city_order) +
   coord_flip() +                 # rotates the entire plot
-  apde_rotate_xlab(angle = 0,    # rotated x axis labels not needed for horizontal version
-                  hjust = 0.5)   # horizontal justification
+  theme(axis.text.x = element_text(angle = 0))  # undo the pivot of the x-axis
 ```
 
 ```{r display_horizontal2}

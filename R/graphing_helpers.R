@@ -199,45 +199,6 @@ apde_quantile_breaks <- function(data, n = 5) {
   return(as.integer(breaks))
 }
 
-# apde_rotate_xlab() ----
-#' Rotate x-axis labels for better readability
-#'
-#' @description
-#' Modifies the theme to rotate x-axis labels by a specified angle, improving readability
-#' for long labels or crowded axes.
-#'
-#' @param angle Rotation angle in degrees (0-360)
-#' @param hjust Horizontal justification (0-1)
-#'
-#' @examples
-#' library(ggplot2)
-#' 
-#' # Default 45-degree rotation
-#' ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
-#'   geom_col() +
-#'   apde_rotate_xlab()
-#'
-#' # Custom angle and justification
-#' ggplot(lifespanDT_agg, aes(city, mean_lifespan)) +
-#'   geom_col() +
-#'   apde_rotate_xlab(angle = 90, hjust = 0.5)
-#'
-#' @import ggplot2
-#'
-#' @return A ggplot2 theme object modifying only the x-axis text angle and justification
-#' @seealso \code{\link{apde_theme}} for the complete APDE theme
-#' @export
-apde_rotate_xlab <- function(angle = 45, hjust = 1) {
-  if (!is.numeric(angle) || angle < 0 || angle > 360) {
-    stop("`angle` must be a number between 0 and 360 degrees")
-  }
-  if (!is.numeric(hjust) || hjust < 0 || hjust > 1) {
-    stop("`hjust` must be a number between 0 and 1")
-  }
-
-  theme(axis.text.x = element_text(angle = angle, hjust = hjust))
-}
-
 # apde_theme() ----
 #' APDE's standardized theme for ggplot2 visualizations
 #'
@@ -273,7 +234,7 @@ apde_rotate_xlab <- function(angle = 45, hjust = 1) {
 #' @import ggplot2
 #'
 #' @return A complete ggplot2 theme based on theme_minimal with APDE-specific modifications
-#' @seealso \code{\link{apde_caption}}, \code{\link{apde_rotate_xlab}}
+#' @seealso \code{\link{apde_caption}}
 #' @export
 apde_theme <- function(base_size = 12,
                        base_family = 'Arial') {
