@@ -169,15 +169,14 @@ myplot
 
 ## Default APDE theme and formatting
 
-The `apde_caption()`, `apde_theme()`, and `apde_rotate_xlab()` elements are from the `apde.graphs` package, not `ggplot2`.
+The `apde_caption()` and `apde_theme()` elements are from the `apde.graphs` package, not `ggplot2`.
 
 ```{r add_theme}
 #| echo: true
 #| output: false
 myplot <- myplot +
   apde_theme() +
-  apde_caption(data_source = "Synthetic dataset") +
-  apde_rotate_xlab(angle = 90, hjust = 1)           # rotate x-axis labels 90 degrees
+  apde_caption(data_source = "Synthetic dataset") 
 ```
 
 ```{r display_with_theme}
@@ -191,13 +190,13 @@ myplot
 
 ## Tweak default theme
 
-Bold the x-axis labels to align with CHI standards.
+Bold the x-axis labels to align with CHI standards & rotate the x-axis labels to prevent crowding.
 
 ```{r tweak_default_theme}
 #| echo: true
 #| output: false
 myplot <- myplot +
-  theme(axis.text.x = element_text(face = 'bold'))
+  theme(axis.text.x = element_text(face = 'bold', angle = 90))
 ```
 
 ```{r display_tweak_default_theme}

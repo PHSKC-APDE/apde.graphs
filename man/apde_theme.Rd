@@ -44,5 +44,5 @@ ggplot(wisdomDT, aes(age, wisdom_score)) +
 
 }
 \seealso{
-\code{\link{apde_caption}}, \code{\link{apde_rotate_xlab}}
+\code{\link{apde_caption}}
 }

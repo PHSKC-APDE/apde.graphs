@@ -16,9 +16,8 @@ The package includes four helper functions to streamline your visualization work
 
 - `apde_theme()`: Applies APDE's standardized ggplot2 theme
 - `apde_caption()`: Adds a standardized caption with division name, date, and data source
-- `apde_linear_breaks()`: Generate Evenly Space Integer Breaks
+- `apde_linear_breaks()`: Generate Evenly Spaced Integer Breaks
 - `apde_quantile_breaks()`: Generate Data-Driven Breaks Using Quantiles
-- `apde_rotate_xlab()`: Rotates x-axis labels for better readability
 
 ## Examples 
 Click on any image in our gallery below or visit our [Wiki](https://github.com/PHSKC-APDE/apde.graphs/wiki) for detailed examples and usage guides. 

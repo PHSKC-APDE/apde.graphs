@@ -3,7 +3,6 @@
 export(apde_caption)
 export(apde_linear_breaks)
 export(apde_quantile_breaks)
-export(apde_rotate_xlab)
 export(apde_theme)
 import(ggplot2)
 importFrom(grDevices,windowsFonts)
